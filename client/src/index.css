@@ -138,6 +138,39 @@ a {
   transform: translateY(-2px);
 }
 
+.menu-button {
+  display: none;
+
+  width: 42px;
+  height: 42px;
+
+  padding: 0;
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.45);
+
+  cursor: pointer;
+}
+
+.menu-button span {
+  display: block;
+
+  width: 18px;
+  height: 2px;
+
+  margin: 4px auto;
+
+  border-radius: 999px;
+
+  background: var(--sage-700);
+}
+
+.mobile-menu {
+  display: none;
+}
+
 
 /* --------------------
    HERO
@@ -155,6 +188,24 @@ a {
   grid-template-columns: 1.08fr 0.92fr;
   align-items: center;
   gap: 90px;
+}
+
+.hero-content {
+  position: relative;
+  width: 100%;
+  min-height: 480px;
+}
+
+.story-copy {
+  position: relative;
+  width: 100%;
+  min-height: 500px;
+}
+
+.chapter-copy {
+  position: absolute;
+  inset: 0;
+  width: 100%;
 }
 
 .eyebrow {
@@ -416,57 +467,199 @@ a {
 
   .hero-content {
     max-width: 720px;
+    min-height: 360px;
   }
 
   .hero-visual {
     width: min(100%, 560px);
   }
+
+  .scene-shell {
+  height: 460px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .button,
+  .nav-links a,
+  .nav-contact,
+  .mobile-menu {
+    transition-duration: 0ms;
+  }
+
+  .scroll-line::after {
+    animation: none;
+  }
 }
 
 @media (max-width: 650px) {
-  .container {
-    width: min(100% - 32px, 1120px);
-  }
-
-  .navbar {
-    min-height: 68px;
-  }
-
-  .nav-links {
+  .nav-links,
+  .desktop-contact {
     display: none;
   }
 
-  .nav-contact {
-    padding: 9px 15px;
+  .menu-button {
+    display: block;
   }
 
-  .hero {
-    min-height: auto;
-    padding: 65px 0 90px;
+  .mobile-menu {
+    display: flex;
+    flex-direction: column;
+
+    max-height: 0;
+    overflow: hidden;
+
+    padding: 0 16px;
+
+    background: rgba(248, 247, 241, 0.97);
+
+    opacity: 0;
+
+    transition:
+      max-height 250ms ease,
+      opacity 200ms ease,
+      padding 250ms ease;
   }
 
-  .hero h1 {
-    font-size: clamp(3rem, 15vw, 4.5rem);
+  .mobile-menu-open {
+    max-height: 320px;
+    padding: 8px 16px 22px;
+    opacity: 1;
+
+    border-bottom: 1px solid var(--border);
   }
 
-  .hero-description {
+  .mobile-menu a {
+    padding: 14px 4px;
+
+    color: var(--text-muted);
     font-size: 1rem;
-    line-height: 1.7;
+    font-weight: 550;
+
+    border-bottom: 1px solid rgba(216, 223, 211, 0.7);
   }
 
-  .hero-actions {
-    width: 100%;
+  .mobile-menu a:last-child {
+    border-bottom: none;
   }
 
-  .button {
-    flex: 1;
+  .scene-shell {
+    height: 340px;
+    border-radius: 24px;
   }
 
-  .window-content {
-    padding: 24px;
+  .hero-story {
+    min-height: auto;
   }
 
-  .visual-window {
-    transform: none;
+  .hero-sticky {
+    position: relative;
+    top: auto;
+
+    min-height: auto;
+
+    padding: 65px 0 90px;
+
+    overflow: visible;
+  }
+
+  .scroll-hint {
+    display: none;
+  }
+}
+
+/* --------------------
+   3D HERO SCENE
+-------------------- */
+
+.scene-shell {
+  width: 100%;
+  height: 540px;
+  overflow: visible;
+}
+
+.scene-shell canvas {
+  display: block;
+}
+
+/* --------------------
+   STORY HERO
+-------------------- */
+
+.hero-story {
+  position: relative;
+  min-height: 260vh;
+}
+
+.hero-sticky {
+  position: sticky;
+  top: 76px;
+
+  min-height: calc(100vh - 76px);
+
+  display: flex;
+  align-items: center;
+
+  padding: 60px 0;
+
+  overflow: hidden;
+}
+
+.scroll-hint {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-top: 38px;
+
+  color: var(--text-muted);
+
+  font-size: 0.76rem;
+  font-weight: 600;
+
+  letter-spacing: 0.03em;
+}
+
+.scroll-line {
+  position: relative;
+
+  display: block;
+
+  width: 42px;
+  height: 1px;
+
+  background: var(--sage-300);
+
+  overflow: hidden;
+}
+
+.scroll-line::after {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  background: var(--sage-700);
+
+  transform: translateX(-100%);
+
+  animation: scrollLine 1.8s ease-in-out infinite;
+}
+
+@keyframes scrollLine {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  50% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(100%);
   }
 }
