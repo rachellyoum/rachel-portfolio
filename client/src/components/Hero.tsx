@@ -1,27 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { chapterVisibility, clamp01 } from "../story/timeline";
 import PortfolioScene from "./PortfolioScene";
-
-const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
-
-const smoothstep = (start: number, end: number, value: number) => {
-  if (end === start) return 0;
-
-  const t = clamp01((value - start) / (end - start));
-  return t * t * (3 - 2 * t);
-};
-
-const rangeProgress = (value: number, start: number, end: number) => {
-  if (end === start) return 0;
-
-  return clamp01((value - start) / (end - start));
-};
-
-const STORY_RANGES = {
-  chapter1: [0, 0.3] as const,
-  workspaceExit: [0.3, 0.48] as const,
-  campusIntro: [0.42, 0.6] as const,
-  chapter2: [0.6, 1] as const,
-};
 
 function usePrefersReducedMotion() {
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -73,29 +52,13 @@ function Hero() {
   }, []);
 
   const progress = reducedMotion ? clamp01(scrollProgress * 0.8) : scrollProgress;
-  const chapter1Progress = rangeProgress(
-    progress,
-    STORY_RANGES.chapter1[0],
-    STORY_RANGES.chapter1[1]
-  );
-  const chapter2Progress = rangeProgress(
-    progress,
-    STORY_RANGES.campusIntro[0],
-    STORY_RANGES.campusIntro[1]
-  );
-  const chapter1Visible = 1 - smoothstep(
-    STORY_RANGES.workspaceExit[0],
-    STORY_RANGES.workspaceExit[1],
-    progress
-  );
-  const chapter2Visible = smoothstep(
-    STORY_RANGES.campusIntro[0],
-    STORY_RANGES.campusIntro[1],
-    progress
-  );
+  const chapter1Opacity = chapterVisibility(progress, "chapter1");
+  const chapter2Opacity = chapterVisibility(progress, "chapter2");
+  const chapter3Opacity = chapterVisibility(progress, "chapter3");
 
-  const chapter1Shift = (1 - chapter1Progress) * 18;
-  const chapter2Shift = (1 - chapter2Progress) * 18;
+  const chapter1Shift = (1 - chapter1Opacity) * -18;
+  const chapter2Shift = (1 - chapter2Opacity) * 20;
+  const chapter3Shift = (1 - chapter3Opacity) * 20;
 
   return (
     <section className="hero-story" id="home" ref={sectionRef}>
@@ -105,9 +68,10 @@ function Hero() {
             <div
               className="chapter-copy chapter-one"
               style={{
-                opacity: chapter1Visible,
+                opacity: chapter1Opacity,
                 transform: `translate3d(0, ${chapter1Shift}px, 0)`,
                 transition: "opacity 260ms ease, transform 260ms ease",
+                pointerEvents: chapter1Opacity > 0.2 ? "auto" : "none",
               }}
             >
               <p className="eyebrow">CHAPTER 01</p>
@@ -148,15 +112,15 @@ function Hero() {
             <div
               className="chapter-copy chapter-two"
               style={{
-                opacity: chapter2Visible,
-                transform: `translate3d(${chapter2Shift}px, ${(1 - chapter2Visible) * 12}px, 0)`,
+                opacity: chapter2Opacity,
+                transform: `translate3d(0, ${chapter2Shift}px, 0)`,
                 transition: "opacity 300ms ease, transform 300ms ease",
-                pointerEvents: chapter2Visible > 0.35 ? "auto" : "none",
+                pointerEvents: chapter2Opacity > 0.2 ? "auto" : "none",
               }}
             >
               <p className="eyebrow">CHAPTER 02</p>
 
-              <h1>Learning to build at SFU.</h1>
+              <h1 className="story-chapter-heading">Learning to build at SFU.</h1>
 
               <p className="hero-description">
                 I&apos;m studying Computing Science at Simon Fraser University,
@@ -175,6 +139,66 @@ function Hero() {
               <div className="scroll-hint">
                 <span className="scroll-line"></span>
                 <span>Keep scrolling — projects ahead</span>
+              </div>
+            </div>
+
+            <div
+              className="chapter-copy chapter-three project-chapter"
+              style={{
+                opacity: chapter3Opacity,
+                transform: `translate3d(0, ${chapter3Shift}px, 0)`,
+                transition: "opacity 300ms ease, transform 300ms ease",
+                pointerEvents: chapter3Opacity > 0.2 ? "auto" : "none",
+              }}
+            >
+              <p className="eyebrow">CHAPTER 03</p>
+
+              <h1 className="project-name">MapSi</h1>
+
+              <p className="project-chapter-tagline">
+                Building software for the way people travel.
+              </p>
+
+              <p className="hero-description project-description">
+                An AI-powered travel planner that turns trip preferences into
+                personalized itineraries, routes, points of interest,
+                transportation recommendations, and collaborative travel plans.
+              </p>
+
+              <p className="project-role">Role: Backend Co-owner</p>
+
+              <div className="hero-tags project-tags">
+                <span>FastAPI</span>
+                <span>PostgreSQL</span>
+                <span>Firebase</span>
+                <span>Redis</span>
+                <span>Google Cloud</span>
+              </div>
+
+              <p className="project-highlight">
+                Built backend services for AI itinerary generation, POI discovery,
+                routing, transportation decisions, and trip sharing.
+              </p>
+
+              <div className="hero-actions project-actions">
+                <a className="button button-primary" href="#" aria-label="View MapSi project">
+                  View Project
+                </a>
+
+                <a
+                  className="button button-secondary"
+                  href="#"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="View MapSi GitHub"
+                >
+                  GitHub
+                </a>
+              </div>
+
+              <div className="scroll-hint">
+                <span className="scroll-line"></span>
+                <span>Keep scrolling — more projects ahead</span>
               </div>
             </div>
           </div>

@@ -1,63 +1,52 @@
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Float, Text } from "@react-three/drei";
-import { MathUtils, Vector3 } from "three";
+import { CatmullRomCurve3, MathUtils, TubeGeometry, Vector3 } from "three";
 import type { Group } from "three";
+import { STORY, clamp01, rangeProgress } from "../story/timeline";
 
 type SceneProps = {
   progress: number;
   reducedMotion?: boolean;
 };
 
-const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
-
-const smoothstep = (start: number, end: number, value: number) => {
-  if (end === start) return 0;
-
-  const t = clamp01((value - start) / (end - start));
-  return t * t * (3 - 2 * t);
-};
-
-const rangeProgress = (value: number, start: number, end: number) => {
-  if (end === start) return 0;
-
-  return clamp01((value - start) / (end - start));
-};
-
-const STORY_RANGES = {
-  chapter1: [0, 0.3] as const,
-  workspaceExit: [0.3, 0.48] as const,
-  campusIntro: [0.42, 0.6] as const,
-  chapter2: [0.6, 1] as const,
-};
+const CAMERA_STOPS = {
+  workspace: {
+    position: new Vector3(6.2, 4.5, 6),
+    target: new Vector3(0, 0.2, 0),
+  },
+  sfu: {
+    position: new Vector3(3.8, 3.1, 5.2),
+    target: new Vector3(0.8, -0.1, 0.8),
+  },
+  mapsi: {
+    position: new Vector3(5.8, 4.0, 7.3),
+    target: new Vector3(0.2, 0.08, 0.35),
+  },
+} as const;
 
 function CameraRig({ progress, reducedMotion = false }: SceneProps) {
   const { camera } = useThree();
 
   useFrame(() => {
     const p = reducedMotion ? clamp01(progress * 0.8) : clamp01(progress);
-    const travel = rangeProgress(p, STORY_RANGES.workspaceExit[0], STORY_RANGES.chapter2[0]);
-    const lookAtTravel = smoothstep(
-      STORY_RANGES.workspaceExit[0],
-      STORY_RANGES.chapter2[0],
-      p
-    );
 
-    const startPosition = new Vector3(6.2, 4.5, 6);
-    const endPosition = new Vector3(3.5, 3.1, 5.1);
-    const targetPosition = new Vector3().lerpVectors(
-      startPosition,
-      endPosition,
-      travel
-    );
+    let start = CAMERA_STOPS.workspace;
+    let end = CAMERA_STOPS.sfu;
+    let t = 0;
 
-    const workspaceLookAt = new Vector3(0, 0.2, 0);
-    const campusLookAt = new Vector3(0.8, -0.1, 0.7);
-    const lookAtTarget = new Vector3().lerpVectors(
-      workspaceLookAt,
-      campusLookAt,
-      lookAtTravel
-    );
+    if (p >= STORY.transition23.start) {
+      start = CAMERA_STOPS.sfu;
+      end = CAMERA_STOPS.mapsi;
+      t = rangeProgress(p, STORY.transition23.start, STORY.transition23.end);
+    } else if (p >= STORY.transition12.start) {
+      start = CAMERA_STOPS.workspace;
+      end = CAMERA_STOPS.sfu;
+      t = rangeProgress(p, STORY.transition12.start, STORY.transition12.end);
+    }
+
+    const targetPosition = new Vector3().lerpVectors(start.position, end.position, t);
+    const lookAtTarget = new Vector3().lerpVectors(start.target, end.target, t);
 
     camera.position.lerp(targetPosition, 0.08);
     camera.lookAt(lookAtTarget);
@@ -73,31 +62,33 @@ function Workspace({ progress, reducedMotion = false }: SceneProps) {
     if (!groupRef.current) return;
 
     const p = reducedMotion ? clamp01(progress * 0.8) : clamp01(progress);
-    const exitProgress = smoothstep(
-      STORY_RANGES.workspaceExit[0],
-      STORY_RANGES.workspaceExit[1],
-      p
-    );
-    const chapter2Progress = rangeProgress(
-      p,
-      STORY_RANGES.chapter2[0],
-      STORY_RANGES.chapter2[1]
-    );
+
+    const initial = { x: 0, y: 0, z: 0, scale: 1 };
+    const exit = { x: -7.2, y: 1.5, z: -5.6, scale: 0.38 };
+
+    let targetX = initial.x;
+    let targetY = initial.y;
+    let targetZ = initial.z;
+    let targetScale = initial.scale;
+
+    if (p >= STORY.transition12.start && p < STORY.transition12.end) {
+      const local = rangeProgress(p, STORY.transition12.start, STORY.transition12.end);
+      targetX = MathUtils.lerp(initial.x, exit.x, local);
+      targetY = MathUtils.lerp(initial.y, exit.y, local);
+      targetZ = MathUtils.lerp(initial.z, exit.z, local);
+      targetScale = MathUtils.lerp(initial.scale, exit.scale, local);
+    } else if (p >= STORY.transition12.end) {
+      targetX = exit.x;
+      targetY = exit.y;
+      targetZ = exit.z;
+      targetScale = exit.scale;
+    }
 
     const rotationY = MathUtils.lerp(-0.35, 0.2, p);
     groupRef.current.rotation.y = MathUtils.lerp(
       groupRef.current.rotation.y,
       rotationY,
       0.08
-    );
-
-    const targetX = MathUtils.lerp(0, -7.2, exitProgress);
-    const targetY = MathUtils.lerp(0, 1.5, exitProgress);
-    const targetZ = MathUtils.lerp(0, -5.6, exitProgress);
-    const targetScale = MathUtils.lerp(
-      1,
-      0.38 + chapter2Progress * 0.04,
-      exitProgress
     );
 
     groupRef.current.position.x = MathUtils.lerp(
@@ -238,19 +229,54 @@ function SFUCampus({ progress, reducedMotion = false }: SceneProps) {
     if (!ref.current) return;
 
     const p = reducedMotion ? clamp01(progress * 0.8) : clamp01(progress);
-    const campusProgress = rangeProgress(
-      p,
-      STORY_RANGES.campusIntro[0],
-      STORY_RANGES.campusIntro[1]
+
+    const hidden = { x: 8.2, y: -1.1, z: 3.1, scale: 0.72 };
+    const settled = { x: 0.7, y: -0.18, z: 0.8, scale: 1 };
+    const exit = { x: -10.5, y: -2.9, z: -9.8, scale: 0.24 };
+
+    let targetX = hidden.x;
+    let targetY = hidden.y;
+    let targetZ = hidden.z;
+    let targetScale = hidden.scale;
+
+    if (p >= STORY.transition12.start && p < STORY.transition12.end) {
+      const local = rangeProgress(p, STORY.transition12.start, STORY.transition12.end);
+      targetX = MathUtils.lerp(hidden.x, settled.x, local);
+      targetY = MathUtils.lerp(hidden.y, settled.y, local);
+      targetZ = MathUtils.lerp(hidden.z, settled.z, local);
+      targetScale = MathUtils.lerp(hidden.scale, settled.scale, local);
+    } else if (p >= STORY.transition12.end && p < STORY.transition23.start) {
+      targetX = settled.x;
+      targetY = settled.y;
+      targetZ = settled.z;
+      targetScale = settled.scale;
+    } else if (p >= STORY.transition23.start && p < STORY.transition23.end) {
+      const local = rangeProgress(p, STORY.transition23.start, STORY.transition23.end);
+      targetX = MathUtils.lerp(settled.x, exit.x, local);
+      targetY = MathUtils.lerp(settled.y, exit.y, local);
+      targetZ = MathUtils.lerp(settled.z, exit.z, local);
+      targetScale = MathUtils.lerp(settled.scale, exit.scale, local);
+    } else if (p >= STORY.transition23.end) {
+      targetX = exit.x;
+      targetY = exit.y;
+      targetZ = exit.z;
+      targetScale = exit.scale;
+    }
+
+    const localExit = p >= STORY.transition23.start ? rangeProgress(p, STORY.transition23.start, STORY.transition23.end) : 0;
+    const targetRotationY = MathUtils.lerp(0.15, 0.95, Math.min(1, localExit + 0.15));
+    const targetRotationZ = MathUtils.lerp(0, -0.18, Math.min(1, localExit + 0.12));
+
+    ref.current.rotation.y = MathUtils.lerp(
+      ref.current.rotation.y,
+      targetRotationY,
+      0.08
     );
-
-    const startPos = { x: 8.2, y: -1.0, z: 3.2 };
-    const endPos = { x: 0.6, y: -0.2, z: 0.8 };
-
-    const targetX = MathUtils.lerp(startPos.x, endPos.x, campusProgress);
-    const targetY = MathUtils.lerp(startPos.y, endPos.y, campusProgress);
-    const targetZ = MathUtils.lerp(startPos.z, endPos.z, campusProgress);
-    const targetScale = MathUtils.lerp(0.72, 1, campusProgress);
+    ref.current.rotation.z = MathUtils.lerp(
+      ref.current.rotation.z,
+      targetRotationZ,
+      0.08
+    );
 
     ref.current.position.x = MathUtils.lerp(
       ref.current.position.x,
@@ -348,7 +374,266 @@ function SFUCampus({ progress, reducedMotion = false }: SceneProps) {
   );
 }
 
+function MapPin({
+  position,
+  color = "#8fb7d6",
+  scale = 1,
+}: {
+  position: [number, number, number];
+  color?: string;
+  scale?: number;
+}) {
+  return (
+    <group position={position} scale={scale}>
+      <mesh position={[0, 0.22, 0]}>
+        <sphereGeometry args={[0.18, 18, 18]} />
+        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.14} />
+      </mesh>
+
+      <mesh position={[0, -0.12, 0]}>
+        <coneGeometry args={[0.14, 0.58, 18]} />
+        <meshStandardMaterial color={color} />
+      </mesh>
+
+      <mesh position={[0, -0.38, 0]}>
+        <sphereGeometry args={[0.08, 12, 12]} />
+        <meshStandardMaterial color="#eaf1f7" />
+      </mesh>
+    </group>
+  );
+}
+
+function RouteNode({ position }: { position: [number, number, number] }) {
+  return (
+    <mesh position={position}>
+      <sphereGeometry args={[0.11, 16, 16]} />
+      <meshStandardMaterial color="#dfeaf7" emissive="#99bad7" emissiveIntensity={0.34} />
+    </mesh>
+  );
+}
+
+function Airplane({ reducedMotion = false, path }: { reducedMotion?: boolean; path: CatmullRomCurve3 }) {
+  const ref = useRef<Group>(null);
+
+  useFrame(({ clock }) => {
+    if (!ref.current) return;
+
+    if (reducedMotion) {
+      ref.current.position.set(2.3, 1.05, -0.1);
+      ref.current.rotation.set(0.2, -0.9, -0.12);
+      return;
+    }
+
+    const t = (clock.getElapsedTime() * 0.08) % 1;
+    const point = path.getPointAt(t);
+    const nextPoint = path.getPointAt((t + 0.01) % 1);
+
+    ref.current.position.set(point.x + 0.2, point.y + 0.42, point.z + 0.15);
+    ref.current.lookAt(nextPoint.x, nextPoint.y, nextPoint.z);
+    ref.current.rotateY(Math.PI * 0.5);
+    ref.current.rotateZ(-0.12);
+  });
+
+  return (
+    <group ref={ref}>
+      <mesh position={[0, 0, 0]} rotation={[0, 0, 0.1]}>
+        <boxGeometry args={[0.9, 0.12, 0.18]} />
+        <meshStandardMaterial color="#f0f0eb" />
+      </mesh>
+      <mesh position={[-0.25, 0.04, 0]} rotation={[0.15, 0, 0]}>
+        <boxGeometry args={[0.38, 0.08, 0.18]} />
+        <meshStandardMaterial color="#dfeaf7" />
+      </mesh>
+      <mesh position={[0.3, 0.02, 0]} rotation={[0, 0, 0.08]}>
+        <boxGeometry args={[0.5, 0.08, 0.16]} />
+        <meshStandardMaterial color="#dfeaf7" />
+      </mesh>
+      <mesh position={[0.1, 0.15, 0]}>
+        <boxGeometry args={[0.14, 0.12, 0.08]} />
+        <meshStandardMaterial color="#dfeaf7" />
+      </mesh>
+      <mesh position={[-0.2, -0.12, 0]}>
+        <boxGeometry args={[0.2, 0.08, 0.08]} />
+        <meshStandardMaterial color="#dfeaf7" />
+      </mesh>
+      <mesh position={[-0.05, 0, 0.12]}>
+        <boxGeometry args={[0.16, 0.04, 0.1]} />
+        <meshStandardMaterial color="#8fb7d6" emissive="#8fb7d6" emissiveIntensity={0.25} />
+      </mesh>
+    </group>
+  );
+}
+
+function MapSiWorld({ progress, reducedMotion = false }: SceneProps) {
+  const ref = useRef<Group>(null);
+
+  const isMobile = typeof window !== "undefined" && window.innerWidth <= 650;
+  const settledScale = isMobile ? 0.9 : 0.96;
+
+  const routeCurve = useMemo(
+    () =>
+      new CatmullRomCurve3([
+        new Vector3(-2.1, 0.18, -0.9),
+        new Vector3(-1.0, 0.21, 0.05),
+        new Vector3(0.15, 0.25, 0.85),
+        new Vector3(1.2, 0.22, 0.4),
+        new Vector3(2.0, 0.18, -0.2),
+      ]),
+    []
+  );
+
+  const routeGeometry = useMemo(
+    () => new TubeGeometry(routeCurve, 120, 0.055, 12, false),
+    [routeCurve]
+  );
+
+  const routeNodes = useMemo(
+    () =>
+      Array.from({ length: 6 }, (_, index) => {
+        const t = index / 5;
+        return routeCurve.getPointAt(t);
+      }),
+    [routeCurve]
+  );
+
+  useFrame(() => {
+    if (!ref.current) return;
+
+    const p = reducedMotion ? clamp01(progress * 0.8) : clamp01(progress);
+
+    const hidden = { x: 9.2, y: -1.2, z: 3.3, scale: 0.7 };
+    const settled = { x: 0.25, y: 0.08, z: 0.45, scale: settledScale };
+
+    let targetX = hidden.x;
+    let targetY = hidden.y;
+    let targetZ = hidden.z;
+    let targetScale = hidden.scale;
+
+    if (p >= STORY.transition23.start && p < STORY.transition23.end) {
+      const local = rangeProgress(p, STORY.transition23.start, STORY.transition23.end);
+      targetX = MathUtils.lerp(hidden.x, settled.x, local);
+      targetY = MathUtils.lerp(hidden.y, settled.y, local);
+      targetZ = MathUtils.lerp(hidden.z, settled.z, local);
+      targetScale = MathUtils.lerp(hidden.scale, settled.scale, local);
+    } else if (p >= STORY.transition23.end) {
+      targetX = settled.x;
+      targetY = settled.y;
+      targetZ = settled.z;
+      targetScale = settled.scale;
+    }
+
+    ref.current.position.x = MathUtils.lerp(
+      ref.current.position.x,
+      targetX,
+      0.08
+    );
+    ref.current.position.y = MathUtils.lerp(
+      ref.current.position.y,
+      targetY,
+      0.08
+    );
+    ref.current.position.z = MathUtils.lerp(
+      ref.current.position.z,
+      targetZ,
+      0.08
+    );
+
+    const nextScale = MathUtils.lerp(
+      ref.current.scale.x || 0.7,
+      targetScale,
+      0.08
+    );
+    ref.current.scale.x = nextScale;
+    ref.current.scale.y = nextScale;
+    ref.current.scale.z = nextScale;
+  });
+
+  return (
+    <group ref={ref}>
+      <mesh position={[0, -1.18, 0]} rotation={[0.08, 0.2, 0]}>
+        <boxGeometry args={[5.8, 0.38, 4.4]} />
+        <meshStandardMaterial color="#f2f0e7" />
+      </mesh>
+
+      <mesh position={[0, -0.92, 0]} rotation={[-0.08, 0, 0]}>
+        <boxGeometry args={[5.1, 0.14, 3.5]} />
+        <meshStandardMaterial color="#dde7d8" />
+      </mesh>
+
+      <mesh geometry={routeGeometry} position={[0, 0.04, 0]}>
+        <meshStandardMaterial color="#6d9ec4" emissive="#6d9ec4" emissiveIntensity={0.22} />
+      </mesh>
+
+      {routeNodes.map((point, index) => (
+        <RouteNode key={index} position={[point.x, point.y + 0.02, point.z] as [number, number, number]} />
+      ))}
+
+      <MapPin position={[-1.9, 0.3, -0.8]} color="#7eaed3" scale={0.9} />
+      <MapPin position={[0.2, 0.34, 0.75]} color="#7eaed3" scale={0.88} />
+      <MapPin position={[2.0, 0.3, -0.2]} color="#7eaed3" scale={0.92} />
+
+      <group position={[-2.25, 0.02, -0.95]}>
+        <mesh position={[0, 0.22, 0]}>
+          <boxGeometry args={[1.2, 0.8, 0.9]} />
+          <meshStandardMaterial color="#e4e6dc" />
+        </mesh>
+        <mesh position={[0, 0.64, 0.22]}>
+          <boxGeometry args={[0.8, 0.14, 0.28]} />
+          <meshStandardMaterial color="#d0d8ca" />
+        </mesh>
+        <mesh position={[-0.34, 0.42, 0.24]}>
+          <boxGeometry args={[0.12, 0.18, 0.06]} />
+          <meshStandardMaterial color="#aac6d8" />
+        </mesh>
+        <mesh position={[0, 0.42, 0.24]}>
+          <boxGeometry args={[0.12, 0.18, 0.06]} />
+          <meshStandardMaterial color="#aac6d8" />
+        </mesh>
+        <mesh position={[0.34, 0.42, 0.24]}>
+          <boxGeometry args={[0.12, 0.18, 0.06]} />
+          <meshStandardMaterial color="#aac6d8" />
+        </mesh>
+      </group>
+
+      <group position={[0.2, 0.02, 1.25]}>
+        <mesh position={[0, 0.18, 0]}>
+          <boxGeometry args={[0.85, 0.52, 0.75]} />
+          <meshStandardMaterial color="#d8d5c9" />
+        </mesh>
+        <mesh position={[0, 0.53, 0.1]}>
+          <boxGeometry args={[0.9, 0.12, 0.24]} />
+          <meshStandardMaterial color="#c4b39a" />
+        </mesh>
+        <mesh position={[-0.18, 0.32, 0.2]}>
+          <boxGeometry args={[0.16, 0.16, 0.1]} />
+          <meshStandardMaterial color="#8da9bd" />
+        </mesh>
+        <mesh position={[0.24, 0.32, 0.12]}>
+          <boxGeometry args={[0.14, 0.14, 0.1]} />
+          <meshStandardMaterial color="#8da9bd" />
+        </mesh>
+      </group>
+
+      <group position={[2.1, 0.02, -0.82]}>
+        <mesh position={[0, 0.52, 0]}>
+          <cylinderGeometry args={[0.32, 0.46, 1.0, 8]} />
+          <meshStandardMaterial color="#dfe7d9" />
+        </mesh>
+        <mesh position={[0, 1.15, 0]}>
+          <coneGeometry args={[0.24, 0.52, 8]} />
+          <meshStandardMaterial color="#ccd9ca" />
+        </mesh>
+      </group>
+
+      <Airplane reducedMotion={reducedMotion} path={routeCurve} />
+    </group>
+  );
+}
+
 function PortfolioScene({ progress, reducedMotion = false }: SceneProps) {
+  const workspaceVisible = progress < STORY.transition12.end + 0.001;
+  const sfuVisible = progress < STORY.transition23.end + 0.001;
+
   return (
     <div className="scene-shell">
       <Canvas
@@ -363,8 +648,9 @@ function PortfolioScene({ progress, reducedMotion = false }: SceneProps) {
         <directionalLight position={[4, 7, 5]} intensity={2.5} />
         <directionalLight position={[-4, 2, -3]} intensity={0.8} />
 
-        <SFUCampus progress={progress} reducedMotion={reducedMotion} />
-        <Workspace progress={progress} reducedMotion={reducedMotion} />
+        {sfuVisible && <SFUCampus progress={progress} reducedMotion={reducedMotion} />}
+        {workspaceVisible && <Workspace progress={progress} reducedMotion={reducedMotion} />}
+        <MapSiWorld progress={progress} reducedMotion={reducedMotion} />
         <CameraRig progress={progress} reducedMotion={reducedMotion} />
       </Canvas>
     </div>

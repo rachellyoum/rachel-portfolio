@@ -193,19 +193,84 @@ a {
 .hero-content {
   position: relative;
   width: 100%;
-  min-height: 480px;
+  min-height: 500px;
 }
 
 .story-copy {
   position: relative;
   width: 100%;
-  min-height: 500px;
+  min-height: 540px;
 }
 
 .chapter-copy {
   position: absolute;
   inset: 0;
   width: 100%;
+}
+
+.story-chapter-heading {
+  max-width: 640px;
+  font-size: clamp(2.4rem, 3.3vw, 4.2rem);
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+  font-weight: 750;
+}
+
+.project-chapter {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 610px;
+  max-height: calc(100vh - 220px);
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.project-name {
+  margin: 0;
+  font-size: clamp(2.2rem, 2.8vw, 3.4rem);
+  line-height: 0.92;
+  letter-spacing: -0.06em;
+  font-weight: 750;
+  color: var(--text);
+}
+
+.project-chapter-tagline {
+  margin: 0;
+  max-width: 520px;
+  font-size: clamp(1.65rem, 2vw, 2.2rem);
+  line-height: 1.12;
+  letter-spacing: -0.05em;
+  font-weight: 700;
+  color: var(--sage-700);
+}
+
+.project-description {
+  margin: 4px 0 0;
+}
+
+.project-role {
+  margin: 8px 0 0;
+  color: var(--text);
+  font-size: 0.96rem;
+  font-weight: 650;
+}
+
+.project-tags {
+  margin-top: 8px;
+}
+
+.project-highlight {
+  max-width: 560px;
+  margin: 10px 0 0;
+  color: var(--sage-700);
+  font-size: 0.97rem;
+  line-height: 1.7;
+  font-weight: 600;
+}
+
+.project-actions {
+  margin-top: 10px;
 }
 
 .eyebrow {
@@ -474,6 +539,15 @@ a {
     width: min(100%, 560px);
   }
 
+  .project-chapter {
+    max-width: 100%;
+    gap: 12px;
+  }
+
+  .project-chapter-tagline {
+    max-width: 440px;
+  }
+
   .scene-shell {
   height: 460px;
   }
@@ -500,6 +574,27 @@ a {
   .nav-links,
   .desktop-contact {
     display: none;
+  }
+
+  .project-chapter {
+    gap: 9px;
+    padding-top: 2px;
+    max-height: none;
+  }
+
+  .project-name {
+    font-size: clamp(2.1rem, 9vw, 3.1rem);
+  }
+
+  .project-chapter-tagline {
+    font-size: clamp(1.45rem, 6vw, 1.9rem);
+    max-width: 100%;
+  }
+
+  .project-description,
+  .project-highlight,
+  .project-role {
+    font-size: 0.96rem;
   }
 
   .menu-button {
@@ -592,7 +687,7 @@ a {
 
 .hero-story {
   position: relative;
-  min-height: 260vh;
+  min-height: 420vh;
 }
 
 .hero-sticky {
