@@ -55,10 +55,12 @@ function Hero() {
   const chapter1Opacity = chapterVisibility(progress, "chapter1");
   const chapter2Opacity = chapterVisibility(progress, "chapter2");
   const chapter3Opacity = chapterVisibility(progress, "chapter3");
+  const chapter4Opacity = chapterVisibility(progress, "chapter4");
 
   const chapter1Shift = (1 - chapter1Opacity) * -18;
   const chapter2Shift = (1 - chapter2Opacity) * 20;
   const chapter3Shift = (1 - chapter3Opacity) * 20;
+  const chapter4Shift = (1 - chapter4Opacity) * 20;
 
   return (
     <section className="hero-story" id="home" ref={sectionRef}>
@@ -187,7 +189,7 @@ function Hero() {
 
                 <a
                   className="button button-secondary"
-                  href="#"
+                  href="https://github.com/rachellyoum/mapsi-public"
                   target="_blank"
                   rel="noreferrer"
                   aria-label="View MapSi GitHub"
@@ -199,6 +201,65 @@ function Hero() {
               <div className="scroll-hint">
                 <span className="scroll-line"></span>
                 <span>Keep scrolling — more projects ahead</span>
+              </div>
+            </div>
+
+            <div
+              className="chapter-copy chapter-four project-chapter"
+              style={{
+                opacity: chapter4Opacity,
+                transform: `translate3d(0, ${chapter4Shift}px, 0)`,
+                transition: "opacity 300ms ease, transform 300ms ease",
+                pointerEvents: chapter4Opacity > 0.2 ? "auto" : "none",
+              }}
+            >
+              <p className="eyebrow">CHAPTER 04</p>
+
+              <h1 className="project-name">Prioritize</h1>
+
+              <p className="project-chapter-tagline">
+                Turning busy schedules into something manageable.
+              </p>
+
+              <p className="hero-description project-description">
+                A productivity platform that helps organize tasks, schedules, and
+                calendar events through a backend-driven workflow.
+              </p>
+
+              <p className="project-role">Role: Backend Developer</p>
+
+              <div className="hero-tags project-tags">
+                <span>FastAPI</span>
+                <span>PostgreSQL</span>
+                <span>SQLAlchemy</span>
+                <span>JWT</span>
+                <span>Docker</span>
+              </div>
+
+              <p className="project-highlight">
+                Built user authentication and backend services for calendar output,
+                event logging, and scheduling workflows.
+              </p>
+
+              <div className="hero-actions project-actions">
+                <a className="button button-primary" href="#" aria-label="View Prioritize project">
+                  View Project
+                </a>
+
+                <a
+                  className="button button-secondary"
+                  href="#"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="View Prioritize GitHub"
+                >
+                  GitHub
+                </a>
+              </div>
+
+              <div className="scroll-hint">
+                <span className="scroll-line"></span>
+                <span>Keep scrolling — something different ahead</span>
               </div>
             </div>
           </div>

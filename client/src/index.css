@@ -576,6 +576,10 @@ a {
     display: none;
   }
 
+  .hero-story {
+    min-height: auto;
+  }
+
   .project-chapter {
     gap: 9px;
     padding-top: 2px;
@@ -687,7 +691,7 @@ a {
 
 .hero-story {
   position: relative;
-  min-height: 420vh;
+  min-height: 500vh;
 }
 
 .hero-sticky {

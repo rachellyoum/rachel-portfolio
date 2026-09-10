@@ -23,6 +23,10 @@ const CAMERA_STOPS = {
     position: new Vector3(5.8, 4.0, 7.3),
     target: new Vector3(0.2, 0.08, 0.35),
   },
+  prioritize: {
+    position: new Vector3(6.2, 4.2, 7.4),
+    target: new Vector3(0.6, 0.15, 0.6),
+  },
 } as const;
 
 function CameraRig({ progress, reducedMotion = false }: SceneProps) {
@@ -35,7 +39,11 @@ function CameraRig({ progress, reducedMotion = false }: SceneProps) {
     let end = CAMERA_STOPS.sfu;
     let t = 0;
 
-    if (p >= STORY.transition23.start) {
+    if (p >= STORY.transition34.start) {
+      start = CAMERA_STOPS.mapsi;
+      end = CAMERA_STOPS.prioritize;
+      t = rangeProgress(p, STORY.transition34.start, STORY.transition34.end);
+    } else if (p >= STORY.transition23.start) {
       start = CAMERA_STOPS.sfu;
       end = CAMERA_STOPS.mapsi;
       t = rangeProgress(p, STORY.transition23.start, STORY.transition23.end);
@@ -503,6 +511,7 @@ function MapSiWorld({ progress, reducedMotion = false }: SceneProps) {
 
     const hidden = { x: 9.2, y: -1.2, z: 3.3, scale: 0.7 };
     const settled = { x: 0.25, y: 0.08, z: 0.45, scale: settledScale };
+    const exit = { x: -9.2, y: -3.4, z: -7.8, scale: 0.26 };
 
     let targetX = hidden.x;
     let targetY = hidden.y;
@@ -515,11 +524,22 @@ function MapSiWorld({ progress, reducedMotion = false }: SceneProps) {
       targetY = MathUtils.lerp(hidden.y, settled.y, local);
       targetZ = MathUtils.lerp(hidden.z, settled.z, local);
       targetScale = MathUtils.lerp(hidden.scale, settled.scale, local);
-    } else if (p >= STORY.transition23.end) {
+    } else if (p >= STORY.transition23.end && p < STORY.transition34.start) {
       targetX = settled.x;
       targetY = settled.y;
       targetZ = settled.z;
       targetScale = settled.scale;
+    } else if (p >= STORY.transition34.start && p < STORY.transition34.end) {
+      const local = rangeProgress(p, STORY.transition34.start, STORY.transition34.end);
+      targetX = MathUtils.lerp(settled.x, exit.x, local);
+      targetY = MathUtils.lerp(settled.y, exit.y, local);
+      targetZ = MathUtils.lerp(settled.z, exit.z, local);
+      targetScale = MathUtils.lerp(settled.scale, exit.scale, local);
+    } else if (p >= STORY.transition34.end) {
+      targetX = exit.x;
+      targetY = exit.y;
+      targetZ = exit.z;
+      targetScale = exit.scale;
     }
 
     ref.current.position.x = MathUtils.lerp(
@@ -630,9 +650,271 @@ function MapSiWorld({ progress, reducedMotion = false }: SceneProps) {
   );
 }
 
+function TaskCard({
+  progress,
+  reducedMotion,
+  start,
+  end,
+  color,
+  checked,
+}: {
+  progress: number;
+  reducedMotion?: boolean;
+  start: [number, number, number];
+  end: [number, number, number];
+  color: string;
+  checked?: boolean;
+}) {
+  const ref = useRef<Group>(null);
+
+  useFrame(() => {
+    if (!ref.current) return;
+
+    const stage = reducedMotion
+      ? 1
+      : clamp01(rangeProgress(progress, STORY.transition34.start, STORY.transition34.end + 0.14));
+
+    const startVector = new Vector3(...start);
+    const endVector = new Vector3(...end);
+    const targetPosition = startVector.lerp(endVector, stage);
+
+    ref.current.position.lerp(targetPosition, 0.08);
+    ref.current.rotation.y = MathUtils.lerp(ref.current.rotation.y, 0.08, 0.08);
+    ref.current.rotation.z = MathUtils.lerp(ref.current.rotation.z, stage > 0.4 ? 0 : -0.12, 0.08);
+  });
+
+  return (
+    <group ref={ref}>
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[1.45, 0.72, 0.12]} />
+        <meshStandardMaterial color={color} />
+      </mesh>
+
+      <mesh position={[-0.52, 0, 0.08]}>
+        <boxGeometry args={[0.22, 0.22, 0.04]} />
+        <meshStandardMaterial color="#f5f1ea" />
+      </mesh>
+
+      <mesh position={[-0.2, 0.12, 0.1]}>
+        <boxGeometry args={[0.78, 0.1, 0.04]} />
+        <meshStandardMaterial color="#526d52" />
+      </mesh>
+
+      <mesh position={[-0.12, -0.12, 0.1]}>
+        <boxGeometry args={[0.62, 0.1, 0.04]} />
+        <meshStandardMaterial color="#7d8c70" />
+      </mesh>
+
+      {checked && (
+        <group position={[-0.52, 0, 0.14]}>
+          <mesh rotation={[0, 0, -0.6]}>
+            <boxGeometry args={[0.18, 0.06, 0.04]} />
+            <meshStandardMaterial color="#d6a262" />
+          </mesh>
+          <mesh rotation={[0, 0, 0.75]} position={[0.09, -0.02, 0]}>
+            <boxGeometry args={[0.26, 0.06, 0.04]} />
+            <meshStandardMaterial color="#d6a262" />
+          </mesh>
+        </group>
+      )}
+    </group>
+  );
+}
+
+function PrioritizeClock() {
+  return (
+    <group position={[1.95, 0.55, 0.2]} rotation={[0.1, 0.15, 0]}>
+      <mesh>
+        <cylinderGeometry args={[0.38, 0.38, 0.12, 28]} />
+        <meshStandardMaterial color="#f4efe7" />
+      </mesh>
+      <mesh position={[0, 0, 0.06]}>
+        <cylinderGeometry args={[0.31, 0.31, 0.02, 28]} />
+        <meshStandardMaterial color="#e7d3b5" emissive="#d6a262" emissiveIntensity={0.12} />
+      </mesh>
+      <mesh position={[0, 0, 0.08]} rotation={[0, 0, 0.7]}>
+        <boxGeometry args={[0.28, 0.05, 0.04]} />
+        <meshStandardMaterial color="#566b54" />
+      </mesh>
+      <mesh position={[0, 0, 0.08]} rotation={[0, 0, -0.35]}>
+        <boxGeometry args={[0.17, 0.05, 0.04]} />
+        <meshStandardMaterial color="#566b54" />
+      </mesh>
+    </group>
+  );
+}
+
+function PrioritizeWorld({ progress, reducedMotion = false }: SceneProps) {
+  const ref = useRef<Group>(null);
+
+  useFrame(() => {
+    if (!ref.current) return;
+
+    const p = reducedMotion ? clamp01(progress * 0.8) : clamp01(progress);
+    const hidden = { x: 7.8, y: 2.8, z: -3.2, scale: 0.7, rotY: 0.8, rotZ: 0.25 };
+    const settled = { x: 0.7, y: 0.2, z: 0.8, scale: 1, rotY: 0.15, rotZ: 0.08 };
+
+    let targetX = hidden.x;
+    let targetY = hidden.y;
+    let targetZ = hidden.z;
+    let targetScale = hidden.scale;
+    let targetRotY = hidden.rotY;
+    let targetRotZ = hidden.rotZ;
+
+    if (p >= STORY.transition34.start && p < STORY.transition34.end) {
+      const local = rangeProgress(p, STORY.transition34.start, STORY.transition34.end);
+      targetX = MathUtils.lerp(hidden.x, settled.x, local);
+      targetY = MathUtils.lerp(hidden.y, settled.y, local);
+      targetZ = MathUtils.lerp(hidden.z, settled.z, local);
+      targetScale = MathUtils.lerp(hidden.scale, settled.scale, local);
+      targetRotY = MathUtils.lerp(hidden.rotY, settled.rotY, local);
+      targetRotZ = MathUtils.lerp(hidden.rotZ, settled.rotZ, local);
+    } else if (p >= STORY.transition34.end) {
+      targetX = settled.x;
+      targetY = settled.y;
+      targetZ = settled.z;
+      targetScale = settled.scale;
+      targetRotY = settled.rotY;
+      targetRotZ = settled.rotZ;
+    }
+
+    ref.current.position.x = MathUtils.lerp(ref.current.position.x, targetX, 0.08);
+    ref.current.position.y = MathUtils.lerp(ref.current.position.y, targetY, 0.08);
+    ref.current.position.z = MathUtils.lerp(ref.current.position.z, targetZ, 0.08);
+    ref.current.rotation.y = MathUtils.lerp(ref.current.rotation.y, targetRotY, 0.08);
+    ref.current.rotation.z = MathUtils.lerp(ref.current.rotation.z, targetRotZ, 0.08);
+    ref.current.scale.setScalar(MathUtils.lerp(ref.current.scale.x || hidden.scale, targetScale, 0.08));
+  });
+
+  return (
+    <group ref={ref}>
+      <mesh position={[0, -1.1, 0]} rotation={[0.1, 0.2, 0]}>
+        <cylinderGeometry args={[2.7, 2.9, 0.35, 28]} />
+        <meshStandardMaterial color="#dfece0" />
+      </mesh>
+
+      <group position={[0, 0.15, 0]} rotation={[0.26, 0.2, 0]}>
+        <mesh position={[0, 0, 0]}>
+          <boxGeometry args={[4.8, 3.1, 0.18]} />
+          <meshStandardMaterial color="#f4efe7" />
+        </mesh>
+
+        <mesh position={[0, 0, -0.04]}>
+          <boxGeometry args={[4.95, 3.28, 0.08]} />
+          <meshStandardMaterial color="#586d57" />
+        </mesh>
+
+        <mesh position={[0, 1.18, 0.08]}>
+          <boxGeometry args={[4.65, 0.34, 0.06]} />
+          <meshStandardMaterial color="#d4ba8b" emissive="#d4ba8b" emissiveIntensity={0.08} />
+        </mesh>
+
+        <Text position={[0, 1.1, 0.18]} fontSize={0.22} color="#445941" anchorX="center" anchorY="middle">
+          WEEK
+        </Text>
+
+        {[
+          [-1.7, 0.5, 0.11],
+          [-1.7, -0.1, 0.11],
+          [-1.7, -0.7, 0.11],
+          [-1.7, -1.3, 0.11],
+        ].map((pos, index) => (
+          <mesh key={index} position={pos as [number, number, number]}>
+            <boxGeometry args={[0.1, 1.9, 0.06]} />
+            <meshStandardMaterial color="#dfe4d7" />
+          </mesh>
+        ))}
+
+        {[
+          [-1.15, 0.78, 0.11],
+          [-0.35, 0.78, 0.11],
+          [0.45, 0.78, 0.11],
+          [1.4, 0.78, 0.11],
+        ].map((pos, index) => (
+          <mesh key={index} position={pos as [number, number, number]}>
+            <boxGeometry args={[1.7, 0.08, 0.06]} />
+            <meshStandardMaterial color="#dfe4d7" />
+          </mesh>
+        ))}
+
+        <mesh position={[-1.02, 0.2, 0.16]}>
+          <boxGeometry args={[1.55, 0.32, 0.1]} />
+          <meshStandardMaterial color="#dfe6d2" />
+        </mesh>
+        <mesh position={[-0.1, 0.18, 0.16]}>
+          <boxGeometry args={[1.1, 0.26, 0.1]} />
+          <meshStandardMaterial color="#d7b884" emissive="#d7b884" emissiveIntensity={0.08} />
+        </mesh>
+        <mesh position={[1.25, -0.16, 0.16]}>
+          <boxGeometry args={[1.42, 0.32, 0.1]} />
+          <meshStandardMaterial color="#dfe6d2" />
+        </mesh>
+        <mesh position={[-1.08, -0.62, 0.16]}>
+          <boxGeometry args={[1.25, 0.28, 0.1]} />
+          <meshStandardMaterial color="#e9e0d2" />
+        </mesh>
+        <mesh position={[0.68, -0.58, 0.16]}>
+          <boxGeometry args={[1.88, 0.26, 0.1]} />
+          <meshStandardMaterial color="#d9e1ce" />
+        </mesh>
+      </group>
+
+      <TaskCard
+        progress={progress}
+        reducedMotion={reducedMotion}
+        start={[-2.6, 0.6, -0.8]}
+        end={[-2.2, 0.8, 0.7]}
+        color="#f2ead9"
+        checked
+      />
+      <TaskCard
+        progress={progress}
+        reducedMotion={reducedMotion}
+        start={[-1.2, 1.8, -0.8]}
+        end={[-1.5, 1.2, 0.9]}
+        color="#dfe8d3"
+        checked
+      />
+      <TaskCard
+        progress={progress}
+        reducedMotion={reducedMotion}
+        start={[1.7, 1.2, -0.7]}
+        end={[1.6, 1.1, 0.9]}
+        color="#e8dfcf"
+      />
+      <TaskCard
+        progress={progress}
+        reducedMotion={reducedMotion}
+        start={[2.6, 0.4, -0.2]}
+        end={[2.2, 0.25, 0.7]}
+        color="#edf1e9"
+      />
+
+      <PrioritizeClock />
+
+      <group position={[1.8, -0.9, 0.2]} rotation={[0.18, -0.15, 0]}>
+        <mesh>
+          <boxGeometry args={[1.05, 0.7, 0.1]} />
+          <meshStandardMaterial color="#f4efe7" />
+        </mesh>
+        <mesh position={[0.2, 0.15, 0.08]}>
+          <boxGeometry args={[0.48, 0.1, 0.06]} />
+          <meshStandardMaterial color="#d7b884" emissive="#d7b884" emissiveIntensity={0.12} />
+        </mesh>
+        <mesh position={[-0.22, -0.18, 0.08]}>
+          <boxGeometry args={[0.34, 0.1, 0.06]} />
+          <meshStandardMaterial color="#dfe8d3" />
+        </mesh>
+      </group>
+    </group>
+  );
+}
+
 function PortfolioScene({ progress, reducedMotion = false }: SceneProps) {
   const workspaceVisible = progress < STORY.transition12.end + 0.001;
   const sfuVisible = progress < STORY.transition23.end + 0.001;
+  const mapsiVisible = progress < STORY.transition34.end + 0.001;
+  const prioritizeVisible = progress >= STORY.transition34.start - 0.01;
 
   return (
     <div className="scene-shell">
@@ -650,7 +932,8 @@ function PortfolioScene({ progress, reducedMotion = false }: SceneProps) {
 
         {sfuVisible && <SFUCampus progress={progress} reducedMotion={reducedMotion} />}
         {workspaceVisible && <Workspace progress={progress} reducedMotion={reducedMotion} />}
-        <MapSiWorld progress={progress} reducedMotion={reducedMotion} />
+        {mapsiVisible && <MapSiWorld progress={progress} reducedMotion={reducedMotion} />}
+        {prioritizeVisible && <PrioritizeWorld progress={progress} reducedMotion={reducedMotion} />}
         <CameraRig progress={progress} reducedMotion={reducedMotion} />
       </Canvas>
     </div>
