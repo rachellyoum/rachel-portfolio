@@ -57,27 +57,30 @@ function Hero() {
   const chapter3Opacity = chapterVisibility(progress, "chapter3");
   const chapter4Opacity = chapterVisibility(progress, "chapter4");
   const chapter5Opacity = chapterVisibility(progress, "chapter5");
+  const chapter6Opacity = chapterVisibility(progress, "chapter6");
 
   const chapter1Shift = (1 - chapter1Opacity) * -18;
   const chapter2Shift = (1 - chapter2Opacity) * 20;
   const chapter3Shift = (1 - chapter3Opacity) * 20;
   const chapter4Shift = (1 - chapter4Opacity) * 20;
   const chapter5Shift = (1 - chapter5Opacity) * 20;
+  const chapter6Shift = (1 - chapter6Opacity) * 20;
 
   return (
-    <section className="hero-story" id="home" ref={sectionRef}>
-      <div className="hero hero-sticky">
-        <div className="container hero-grid">
-          <div className="hero-content story-copy">
-            <div
-              className="chapter-copy chapter-one"
-              style={{
-                opacity: chapter1Opacity,
-                transform: `translate3d(0, ${chapter1Shift}px, 0)`,
-                transition: "opacity 260ms ease, transform 260ms ease",
-                pointerEvents: chapter1Opacity > 0.2 ? "auto" : "none",
-              }}
-            >
+    <>
+      <section className="hero-story" id="home" ref={sectionRef}>
+        <div className="hero hero-sticky">
+          <div className="container hero-grid">
+            <div className="hero-content story-copy">
+              <div
+                className="chapter-copy chapter-one"
+                style={{
+                  opacity: chapter1Opacity,
+                  transform: `translate3d(0, ${chapter1Shift}px, 0)`,
+                  transition: "opacity 260ms ease, transform 260ms ease",
+                  pointerEvents: chapter1Opacity > 0.2 ? "auto" : "none",
+                }}
+              >
               <p className="eyebrow">CHAPTER 01</p>
 
               <h1>
@@ -321,6 +324,51 @@ function Hero() {
                 <span>Keep scrolling — what&apos;s next?</span>
               </div>
             </div>
+
+            <div
+              id="contact"
+              className="chapter-copy chapter-six project-chapter final-chapter"
+              style={{
+                opacity: chapter6Opacity,
+                transform: `translate3d(0, ${chapter6Shift}px, 0)`,
+                transition: "opacity 300ms ease, transform 300ms ease",
+                pointerEvents: chapter6Opacity > 0.2 ? "auto" : "none",
+              }}
+            >
+              <p className="eyebrow">CHAPTER 06</p>
+
+              <h1 className="project-name final-headline">What&apos;s next?</h1>
+
+              <p className="project-chapter-tagline final-tagline">
+                The next chapter is still being written.
+              </p>
+
+              <p className="hero-description project-description final-description">
+                I&apos;m looking for software development opportunities where I can
+                keep learning, contribute to real products, and grow as an engineer.
+              </p>
+
+              <p className="project-role final-role">Backend · Full Stack · Game Development</p>
+
+              <div className="hero-actions project-actions final-actions">
+                <a className="button button-primary" href="#" aria-label="View resume">
+                  View Resume
+                </a>
+
+                <a className="button button-secondary" href="#contact" aria-label="Contact Rachel">
+                  Contact Me
+                </a>
+              </div>
+
+              <div className="final-links">
+                <a href="#" aria-label="View LinkedIn profile">
+                  LinkedIn
+                </a>
+                <a href="https://github.com/rachellyoum" target="_blank" rel="noreferrer" aria-label="View GitHub profile">
+                  GitHub
+                </a>
+              </div>
+            </div>
           </div>
 
           <div className="hero-visual">
@@ -328,7 +376,23 @@ function Hero() {
           </div>
         </div>
       </div>
-    </section>
+      </section>
+
+      <footer className="story-footer">
+        <div className="container">
+          <p>Rachel Youm</p>
+          <p>Software Developer / Computing Science</p>
+          <div className="story-footer-nav">
+            <a href="https://github.com/rachellyoum" target="_blank" rel="noreferrer">
+              GitHub
+            </a>
+            {/* TODO: add LinkedIn URL when available. */}
+            <a href="#">LinkedIn</a>
+            <a href="#home">Back to top</a>
+          </div>
+        </div>
+      </footer>
+    </>
   );
 }
 
