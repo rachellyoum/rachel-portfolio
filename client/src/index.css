@@ -226,6 +226,13 @@ a {
   padding-top: 4px;
 }
 
+.project-header-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .project-name {
   margin: 0;
   font-size: clamp(2.2rem, 2.8vw, 3.4rem);
@@ -233,6 +240,23 @@ a {
   letter-spacing: -0.06em;
   font-weight: 750;
   color: var(--text);
+}
+
+.project-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--sage-100);
+  border: 1px solid rgba(115, 143, 107, 0.28);
+  color: var(--sage-700);
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1;
 }
 
 .project-chapter-tagline {
@@ -595,6 +619,14 @@ a {
     max-width: 100%;
   }
 
+  .project-header-row {
+    align-items: flex-start;
+  }
+
+  .project-status {
+    margin-top: 2px;
+  }
+
   .project-description,
   .project-highlight,
   .project-role {
@@ -691,7 +723,7 @@ a {
 
 .hero-story {
   position: relative;
-  min-height: 500vh;
+  min-height: 560vh;
 }
 
 .hero-sticky {

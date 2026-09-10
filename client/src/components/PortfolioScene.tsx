@@ -27,6 +27,10 @@ const CAMERA_STOPS = {
     position: new Vector3(6.2, 4.2, 7.4),
     target: new Vector3(0.6, 0.15, 0.6),
   },
+  dogHuman: {
+    position: new Vector3(9.1, 4.2, 7.4),
+    target: new Vector3(0.55, 0.52, 0.2),
+  },
 } as const;
 
 function CameraRig({ progress, reducedMotion = false }: SceneProps) {
@@ -39,7 +43,11 @@ function CameraRig({ progress, reducedMotion = false }: SceneProps) {
     let end = CAMERA_STOPS.sfu;
     let t = 0;
 
-    if (p >= STORY.transition34.start) {
+    if (p >= STORY.transition45.start) {
+      start = CAMERA_STOPS.prioritize;
+      end = CAMERA_STOPS.dogHuman;
+      t = rangeProgress(p, STORY.transition45.start, STORY.transition45.end);
+    } else if (p >= STORY.transition34.start) {
       start = CAMERA_STOPS.mapsi;
       end = CAMERA_STOPS.prioritize;
       t = rangeProgress(p, STORY.transition34.start, STORY.transition34.end);
@@ -753,6 +761,7 @@ function PrioritizeWorld({ progress, reducedMotion = false }: SceneProps) {
     const p = reducedMotion ? clamp01(progress * 0.8) : clamp01(progress);
     const hidden = { x: 7.8, y: 2.8, z: -3.2, scale: 0.7, rotY: 0.8, rotZ: 0.25 };
     const settled = { x: 0.7, y: 0.2, z: 0.8, scale: 1, rotY: 0.15, rotZ: 0.08 };
+    const exit = { x: -10.5, y: -3.4, z: -7.8, scale: 0.22, rotY: 0.95, rotZ: -0.2 };
 
     let targetX = hidden.x;
     let targetY = hidden.y;
@@ -769,13 +778,28 @@ function PrioritizeWorld({ progress, reducedMotion = false }: SceneProps) {
       targetScale = MathUtils.lerp(hidden.scale, settled.scale, local);
       targetRotY = MathUtils.lerp(hidden.rotY, settled.rotY, local);
       targetRotZ = MathUtils.lerp(hidden.rotZ, settled.rotZ, local);
-    } else if (p >= STORY.transition34.end) {
+    } else if (p >= STORY.transition34.end && p < STORY.transition45.start) {
       targetX = settled.x;
       targetY = settled.y;
       targetZ = settled.z;
       targetScale = settled.scale;
       targetRotY = settled.rotY;
       targetRotZ = settled.rotZ;
+    } else if (p >= STORY.transition45.start && p < STORY.transition45.end) {
+      const local = rangeProgress(p, STORY.transition45.start, STORY.transition45.end);
+      targetX = MathUtils.lerp(settled.x, exit.x, local);
+      targetY = MathUtils.lerp(settled.y, exit.y, local);
+      targetZ = MathUtils.lerp(settled.z, exit.z, local);
+      targetScale = MathUtils.lerp(settled.scale, exit.scale, local);
+      targetRotY = MathUtils.lerp(settled.rotY, exit.rotY, local);
+      targetRotZ = MathUtils.lerp(settled.rotZ, exit.rotZ, local);
+    } else if (p >= STORY.transition45.end) {
+      targetX = exit.x;
+      targetY = exit.y;
+      targetZ = exit.z;
+      targetScale = exit.scale;
+      targetRotY = exit.rotY;
+      targetRotZ = exit.rotZ;
     }
 
     ref.current.position.x = MathUtils.lerp(ref.current.position.x, targetX, 0.08);
@@ -910,11 +934,295 @@ function PrioritizeWorld({ progress, reducedMotion = false }: SceneProps) {
   );
 }
 
+function DogCharacter({ progress, reducedMotion = false }: { progress: number; reducedMotion?: boolean }) {
+  const ref = useRef<Group>(null);
+
+  useFrame(() => {
+    if (!ref.current) return;
+
+    const p = reducedMotion ? 1 : clamp01(rangeProgress(progress, STORY.transition45.start, 1));
+    const split = clamp01((p - 0.18) / 0.24);
+    const plateReached = clamp01((p - 0.42) / 0.2);
+    const reunite = clamp01((p - 0.76) / 0.2);
+
+    const x = MathUtils.lerp(-2.8, -1.2, split) + plateReached * 1.7 + reunite * 0.9;
+    const y = 0.22;
+    const z = 0.22 + Math.sin(p * 2.3) * 0.05;
+    const targetRotationY = MathUtils.lerp(0.24, -0.1, plateReached);
+
+    ref.current.position.set(x, y, z);
+    ref.current.rotation.set(0, targetRotationY, 0);
+  });
+
+  return (
+    <group ref={ref} position={[-2.8, 0.22, 0.22]}>
+      <mesh position={[0, 0.18, 0]}>
+        <boxGeometry args={[0.82, 0.42, 0.44]} />
+        <meshStandardMaterial color="#d8b17d" />
+      </mesh>
+      <mesh position={[0.44, 0.38, 0.02]}>
+        <boxGeometry args={[0.28, 0.22, 0.24]} />
+        <meshStandardMaterial color="#d8b17d" />
+      </mesh>
+      <mesh position={[0.62, 0.54, 0.15]} rotation={[0, 0, -0.32]}>
+        <boxGeometry args={[0.18, 0.06, 0.07]} />
+        <meshStandardMaterial color="#d8b17d" />
+      </mesh>
+      <mesh position={[0.62, 0.54, -0.15]} rotation={[0, 0, -0.32]}>
+        <boxGeometry args={[0.18, 0.06, 0.07]} />
+        <meshStandardMaterial color="#d8b17d" />
+      </mesh>
+      <mesh position={[-0.14, -0.18, 0.12]}>
+        <boxGeometry args={[0.12, 0.34, 0.12]} />
+        <meshStandardMaterial color="#d8b17d" />
+      </mesh>
+      <mesh position={[0.14, -0.18, 0.12]}>
+        <boxGeometry args={[0.12, 0.34, 0.12]} />
+        <meshStandardMaterial color="#d8b17d" />
+      </mesh>
+      <mesh position={[-0.14, -0.18, -0.12]}>
+        <boxGeometry args={[0.12, 0.34, 0.12]} />
+        <meshStandardMaterial color="#d8b17d" />
+      </mesh>
+      <mesh position={[0.14, -0.18, -0.12]}>
+        <boxGeometry args={[0.12, 0.34, 0.12]} />
+        <meshStandardMaterial color="#d8b17d" />
+      </mesh>
+      <mesh position={[-0.38, 0.06, 0.22]} rotation={[0, 0, 0.75]}>
+        <boxGeometry args={[0.18, 0.06, 0.06]} />
+        <meshStandardMaterial color="#c89e6e" />
+      </mesh>
+      <mesh position={[-0.38, 0.06, -0.22]} rotation={[0, 0, 0.75]}>
+        <boxGeometry args={[0.18, 0.06, 0.06]} />
+        <meshStandardMaterial color="#c89e6e" />
+      </mesh>
+      <mesh position={[0.04, 0.08, 0.24]} rotation={[0, 0, -0.78]}>
+        <boxGeometry args={[0.22, 0.06, 0.06]} />
+        <meshStandardMaterial color="#c89e6e" />
+      </mesh>
+    </group>
+  );
+}
+
+function HumanCharacter({ progress, reducedMotion = false }: { progress: number; reducedMotion?: boolean }) {
+  const ref = useRef<Group>(null);
+
+  useFrame(() => {
+    if (!ref.current) return;
+
+    const p = reducedMotion ? 1 : clamp01(rangeProgress(progress, STORY.transition45.start, 1));
+    const split = clamp01((p - 0.12) / 0.22);
+    const doorOpen = clamp01((p - 0.56) / 0.18);
+    const reunite = clamp01((p - 0.78) / 0.2);
+
+    const x = MathUtils.lerp(-2.5, -0.15, split) + doorOpen * 1.5 + reunite * 1.15;
+    const y = 0.33 + (split > 0.4 ? 0.08 : 0);
+    const z = 0.42 + Math.sin(p * 2.8) * 0.04;
+    const rotationY = MathUtils.lerp(0.2, -0.08, doorOpen);
+
+    ref.current.position.set(x, y, z);
+    ref.current.rotation.set(0, rotationY, 0);
+  });
+
+  return (
+    <group ref={ref} position={[-2.5, 0.33, 0.42]}>
+      <mesh position={[0, 0.78, 0]}>
+        <sphereGeometry args={[0.22, 18, 18]} />
+        <meshStandardMaterial color="#f1e6d9" />
+      </mesh>
+      <mesh position={[0, 0.42, 0]}>
+        <boxGeometry args={[0.48, 0.64, 0.22]} />
+        <meshStandardMaterial color="#8ea68f" />
+      </mesh>
+      <mesh position={[-0.32, 0.38, 0]} rotation={[0, 0, 0.48]}>
+        <boxGeometry args={[0.26, 0.08, 0.08]} />
+        <meshStandardMaterial color="#f1e6d9" />
+      </mesh>
+      <mesh position={[0.32, 0.38, 0]} rotation={[0, 0, -0.48]}>
+        <boxGeometry args={[0.26, 0.08, 0.08]} />
+        <meshStandardMaterial color="#f1e6d9" />
+      </mesh>
+      <mesh position={[-0.08, 0.02, 0]}>
+        <boxGeometry args={[0.12, 0.54, 0.12]} />
+        <meshStandardMaterial color="#f1e6d9" />
+      </mesh>
+      <mesh position={[0.12, 0.02, 0]}>
+        <boxGeometry args={[0.12, 0.54, 0.12]} />
+        <meshStandardMaterial color="#f1e6d9" />
+      </mesh>
+      <mesh position={[0, -0.46, 0]}>
+        <boxGeometry args={[0.16, 0.26, 0.16]} />
+        <meshStandardMaterial color="#342f2d" />
+      </mesh>
+    </group>
+  );
+}
+
+function DogHumanWorld({ progress, reducedMotion = false }: SceneProps) {
+  const ref = useRef<Group>(null);
+
+  useFrame(() => {
+    if (!ref.current) return;
+
+    const p = reducedMotion ? clamp01(progress * 0.8) : clamp01(progress);
+    const hidden = { x: 8.4, y: 2.7, z: -3.8, scale: 0.68, rotY: 0.85, rotZ: 0.3 };
+    const settled = { x: 0.52, y: 0.18, z: 0.62, scale: 0.9, rotY: 0.12, rotZ: 0.04 };
+
+    let targetX = hidden.x;
+    let targetY = hidden.y;
+    let targetZ = hidden.z;
+    let targetScale = hidden.scale;
+    let targetRotY = hidden.rotY;
+    let targetRotZ = hidden.rotZ;
+
+    if (p >= STORY.transition45.start && p < STORY.transition45.end) {
+      const local = rangeProgress(p, STORY.transition45.start, STORY.transition45.end);
+      targetX = MathUtils.lerp(hidden.x, settled.x, local);
+      targetY = MathUtils.lerp(hidden.y, settled.y, local);
+      targetZ = MathUtils.lerp(hidden.z, settled.z, local);
+      targetScale = MathUtils.lerp(hidden.scale, settled.scale, local);
+      targetRotY = MathUtils.lerp(hidden.rotY, settled.rotY, local);
+      targetRotZ = MathUtils.lerp(hidden.rotZ, settled.rotZ, local);
+    } else if (p >= STORY.transition45.end) {
+      targetX = settled.x;
+      targetY = settled.y;
+      targetZ = settled.z;
+      targetScale = settled.scale;
+      targetRotY = settled.rotY;
+      targetRotZ = settled.rotZ;
+    }
+
+    ref.current.position.x = MathUtils.lerp(ref.current.position.x, targetX, 0.08);
+    ref.current.position.y = MathUtils.lerp(ref.current.position.y, targetY, 0.08);
+    ref.current.position.z = MathUtils.lerp(ref.current.position.z, targetZ, 0.08);
+    ref.current.rotation.y = MathUtils.lerp(ref.current.rotation.y, targetRotY, 0.08);
+    ref.current.rotation.z = MathUtils.lerp(ref.current.rotation.z, targetRotZ, 0.08);
+    ref.current.scale.setScalar(MathUtils.lerp(ref.current.scale.x || hidden.scale, targetScale, 0.08));
+  });
+
+  const plateProgress = reducedMotion ? 1 : clamp01(rangeProgress(progress, STORY.transition45.start, 1));
+  const doorOpen = plateProgress > 0.58;
+  const plateDown = plateProgress > 0.4;
+  const exitOpen = plateProgress > 0.62;
+
+  return (
+    <group ref={ref}>
+      <mesh position={[0, -0.9, 0]} rotation={[0.05, 0.12, 0]}>
+        <boxGeometry args={[8.5, 0.48, 1.8]} />
+        <meshStandardMaterial color="#dfe7d7" />
+      </mesh>
+
+      <mesh position={[-3.4, 0.16, 0]}>
+        <boxGeometry args={[2.2, 0.28, 1.15]} />
+        <meshStandardMaterial color="#cfdcc5" />
+      </mesh>
+
+      <mesh position={[-0.1, 0.28, 0]}>
+        <boxGeometry args={[2.3, 0.14, 1.0]} />
+        <meshStandardMaterial color="#e9e4d9" />
+      </mesh>
+
+      <mesh position={[2.4, 0.18, 0]}>
+        <boxGeometry args={[2.2, 0.22, 1.0]} />
+        <meshStandardMaterial color="#c8d6bc" />
+      </mesh>
+
+      <mesh position={[0.35, 0.72, 0]}>
+        <boxGeometry args={[2.8, 0.12, 1.0]} />
+        <meshStandardMaterial color="#c8d5b6" />
+      </mesh>
+
+      <mesh position={[2.8, 0.8, 0]}>
+        <boxGeometry args={[0.12, 1.2, 0.12]} />
+        <meshStandardMaterial color="#d4a287" />
+      </mesh>
+
+      <group position={[1.8, 0.26, 0]}>
+        <mesh position={[0, 0, 0]}>
+          <boxGeometry args={[0.22, 1.2, 0.14]} />
+          <meshStandardMaterial color="#b76d53" />
+        </mesh>
+        <mesh position={[0.18, 0.54, 0]}>
+          <boxGeometry args={[0.14, 0.2, 0.14]} />
+          <meshStandardMaterial color="#d4a287" />
+        </mesh>
+      </group>
+
+      <mesh position={[1.1, 0.36, 0]}>
+        <boxGeometry args={[0.18, 0.72, 0.18]} />
+        <meshStandardMaterial color="#6d7d5f" />
+      </mesh>
+
+      <mesh position={[1.1, 0.8, 0]}>
+        <boxGeometry args={[1.1, 0.16, 0.16]} />
+        <meshStandardMaterial color="#6d7d5f" />
+      </mesh>
+
+      <mesh position={[1.1, 0.7, 0]}>
+        <boxGeometry args={[0.1, 0.3, 0.1]} />
+        <meshStandardMaterial color="#d4a287" />
+      </mesh>
+
+      <mesh position={[-0.8, 0.12, 0]}>
+        <boxGeometry args={[0.24, 0.12, 0.38]} />
+        <meshStandardMaterial color={plateDown ? "#d67f66" : "#df8f75"} />
+      </mesh>
+      <mesh position={[-0.8, -0.02, 0]}>
+        <boxGeometry args={[0.64, 0.14, 0.64]} />
+        <meshStandardMaterial color="#b7c7af" />
+      </mesh>
+
+      <group position={[1.1, 0.18, 0.2]}>
+        <mesh position={[0, 0.12, 0]}>
+          <boxGeometry args={[0.18, 0.22, 0.18]} />
+          <meshStandardMaterial color={doorOpen ? "#cf9b7d" : "#a9b9a2"} />
+        </mesh>
+        <mesh position={[-0.42, 0.12, 0]}>
+          <boxGeometry args={[0.18, 0.22, 0.18]} />
+          <meshStandardMaterial color={doorOpen ? "#cf9b7d" : "#a9b9a2"} />
+        </mesh>
+      </group>
+
+      {doorOpen && (
+        <mesh position={[1.18, 0.26, 0]}>
+          <boxGeometry args={[0.5, 0.68, 0.12]} />
+          <meshStandardMaterial color="#d8c7a9" />
+        </mesh>
+      )}
+
+      <group position={[3.75, 0.9, 0]}>
+        <mesh position={[0, 0.08, 0]}>
+          <boxGeometry args={[0.08, 0.55, 0.08]} />
+          <meshStandardMaterial color="#b5674a" />
+        </mesh>
+        <mesh position={[0.18, 0.2, 0]}>
+          <boxGeometry args={[0.36, 0.22, 0.06]} />
+          <meshStandardMaterial color="#d67f66" />
+        </mesh>
+      </group>
+
+      <HumanCharacter progress={progress} reducedMotion={reducedMotion} />
+      <DogCharacter progress={progress} reducedMotion={reducedMotion} />
+
+      <mesh position={[3.6, 0.28, 0]}>
+        <boxGeometry args={[0.56, 0.56, 0.08]} />
+        <meshStandardMaterial color={exitOpen ? "#d7a57f" : "#dfe6d4"} />
+      </mesh>
+
+      <mesh position={[3.8, 0.58, 0]}>
+        <boxGeometry args={[0.1, 0.32, 0.1]} />
+        <meshStandardMaterial color="#7a8e73" />
+      </mesh>
+    </group>
+  );
+}
+
 function PortfolioScene({ progress, reducedMotion = false }: SceneProps) {
   const workspaceVisible = progress < STORY.transition12.end + 0.001;
   const sfuVisible = progress < STORY.transition23.end + 0.001;
   const mapsiVisible = progress < STORY.transition34.end + 0.001;
-  const prioritizeVisible = progress >= STORY.transition34.start - 0.01;
+  const prioritizeVisible = progress < STORY.transition45.end + 0.001;
+  const dogHumanVisible = progress >= STORY.transition45.start - 0.01;
 
   return (
     <div className="scene-shell">
@@ -934,6 +1242,7 @@ function PortfolioScene({ progress, reducedMotion = false }: SceneProps) {
         {workspaceVisible && <Workspace progress={progress} reducedMotion={reducedMotion} />}
         {mapsiVisible && <MapSiWorld progress={progress} reducedMotion={reducedMotion} />}
         {prioritizeVisible && <PrioritizeWorld progress={progress} reducedMotion={reducedMotion} />}
+        {dogHumanVisible && <DogHumanWorld progress={progress} reducedMotion={reducedMotion} />}
         <CameraRig progress={progress} reducedMotion={reducedMotion} />
       </Canvas>
     </div>

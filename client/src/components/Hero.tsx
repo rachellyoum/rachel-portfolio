@@ -56,11 +56,13 @@ function Hero() {
   const chapter2Opacity = chapterVisibility(progress, "chapter2");
   const chapter3Opacity = chapterVisibility(progress, "chapter3");
   const chapter4Opacity = chapterVisibility(progress, "chapter4");
+  const chapter5Opacity = chapterVisibility(progress, "chapter5");
 
   const chapter1Shift = (1 - chapter1Opacity) * -18;
   const chapter2Shift = (1 - chapter2Opacity) * 20;
   const chapter3Shift = (1 - chapter3Opacity) * 20;
   const chapter4Shift = (1 - chapter4Opacity) * 20;
+  const chapter5Shift = (1 - chapter5Opacity) * 20;
 
   return (
     <section className="hero-story" id="home" ref={sectionRef}>
@@ -248,7 +250,7 @@ function Hero() {
 
                 <a
                   className="button button-secondary"
-                  href="#"
+                  href="https://github.com/rachellyoum/prioritize-public"
                   target="_blank"
                   rel="noreferrer"
                   aria-label="View Prioritize GitHub"
@@ -260,6 +262,63 @@ function Hero() {
               <div className="scroll-hint">
                 <span className="scroll-line"></span>
                 <span>Keep scrolling — something different ahead</span>
+              </div>
+            </div>
+
+            <div
+              className="chapter-copy chapter-five project-chapter"
+              style={{
+                opacity: chapter5Opacity,
+                transform: `translate3d(0, ${chapter5Shift}px, 0)`,
+                transition: "opacity 300ms ease, transform 300ms ease",
+                pointerEvents: chapter5Opacity > 0.2 ? "auto" : "none",
+              }}
+            >
+              <p className="eyebrow">CHAPTER 05</p>
+
+              <div className="project-header-row">
+                <h1 className="project-name">Dog + Human</h1>
+                <span className="project-status">IN DEVELOPMENT</span>
+              </div>
+
+              <p className="project-chapter-tagline">
+                Currently building my first Unity game.
+              </p>
+
+              <p className="hero-description project-description">
+                A cooperative puzzle-platformer where a human and dog split up,
+                use different abilities to solve obstacles, and reunite to complete
+                each level.
+              </p>
+
+              <p className="project-role">Role: Developer</p>
+
+              <div className="hero-tags project-tags">
+                <span>Unity</span>
+                <span>C#</span>
+                <span>Game Design</span>
+                <span>2D</span>
+                <span>Gameplay Programming</span>
+              </div>
+
+              <p className="project-highlight">
+                Currently building the split-and-reunite control system and puzzle
+                mechanics that let each character solve different parts of the same
+                level.
+              </p>
+
+              <div className="hero-actions project-actions">
+                {/* TODO: add a real progress/demo page when the Dog + Human project is ready. */}
+                <a className="button button-primary" href="#" aria-label="View Dog + Human progress">
+                  View Progress
+                </a>
+
+                {/* No active Dog + Human repository URL is available yet. */}
+              </div>
+
+              <div className="scroll-hint">
+                <span className="scroll-line"></span>
+                <span>Keep scrolling — what&apos;s next?</span>
               </div>
             </div>
           </div>
