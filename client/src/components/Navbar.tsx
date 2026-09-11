@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { LINKS } from "../data/links";
+import { handleStoryNavigation } from "../utils/storyNavigation";
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -15,12 +17,22 @@ function Navbar() {
         </a>
 
         <div className="nav-links">
-          <a href="#about">About</a>
-          <a href="#projects">Projects</a>
-          <a href="#skills">Skills</a>
+          <a href={LINKS.about} onClick={(event) => handleStoryNavigation(event, "about")}>
+            About
+          </a>
+          <a href={LINKS.projects} onClick={(event) => handleStoryNavigation(event, "projects")}>
+            Projects
+          </a>
+          <a href={LINKS.resume} target="_blank" rel="noreferrer">
+            Resume
+          </a>
         </div>
 
-        <a className="nav-contact desktop-contact" href="#contact">
+        <a
+          className="nav-contact desktop-contact"
+          href={LINKS.contact}
+          onClick={(event) => handleStoryNavigation(event, "contact")}
+        >
           Contact
         </a>
 
@@ -37,19 +49,37 @@ function Navbar() {
       </nav>
 
       <div className={`mobile-menu ${menuOpen ? "mobile-menu-open" : ""}`}>
-        <a href="#about" onClick={closeMenu}>
+        <a
+          href={LINKS.about}
+          onClick={(event) => {
+            handleStoryNavigation(event, "about");
+            closeMenu();
+          }}
+        >
           About
         </a>
 
-        <a href="#projects" onClick={closeMenu}>
+        <a
+          href={LINKS.projects}
+          onClick={(event) => {
+            handleStoryNavigation(event, "projects");
+            closeMenu();
+          }}
+        >
           Projects
         </a>
 
-        <a href="#skills" onClick={closeMenu}>
-          Skills
+        <a href={LINKS.resume} target="_blank" rel="noreferrer" onClick={closeMenu}>
+          Resume
         </a>
 
-        <a href="#contact" onClick={closeMenu}>
+        <a
+          href={LINKS.contact}
+          onClick={(event) => {
+            handleStoryNavigation(event, "contact");
+            closeMenu();
+          }}
+        >
           Contact
         </a>
       </div>

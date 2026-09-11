@@ -1,5 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { LINKS } from "../data/links";
 import { chapterVisibility, clamp01 } from "../story/timeline";
+import { handleStoryNavigation } from "../utils/storyNavigation";
 import PortfolioScene from "./PortfolioScene";
 
 function usePrefersReducedMotion() {
@@ -141,8 +143,13 @@ function Hero() {
       description:
         "I'm a Computing Science student interested in backend systems, full-stack development, and game development. I enjoy turning ideas into useful, polished experiences.",
       actions: [
-        { label: "View my work", href: "#projects", primary: true },
-        { label: "GitHub", href: "https://github.com/rachellyoum", target: "_blank", primary: false },
+        {
+          label: "View my work",
+          href: LINKS.projects,
+          primary: true,
+          onClick: (event: MouseEvent<HTMLAnchorElement>) => handleStoryNavigation(event, "projects"),
+        },
+        { label: "GitHub", href: LINKS.github, target: "_blank", primary: false },
       ],
       tags: ["Backend", "Full Stack", "Game Dev"],
     },
@@ -169,8 +176,7 @@ function Hero() {
       highlight:
         "Built backend services for AI itinerary generation, POI discovery, routing, transportation decisions, and trip sharing.",
       actions: [
-        { label: "View Project", href: "#", primary: true },
-        { label: "GitHub", href: "https://github.com/rachellyoum/mapsi-public", target: "_blank", primary: false },
+        { label: "View Project", href: LINKS.mapsi, target: "_blank", primary: true },
       ],
       hint: "Keep scrolling — more projects ahead",
     },
@@ -187,8 +193,7 @@ function Hero() {
       highlight:
         "Built user authentication and backend services for calendar output, event logging, and scheduling workflows.",
       actions: [
-        { label: "View Project", href: "#", primary: true },
-        { label: "GitHub", href: "https://github.com/rachellyoum/prioritize-public", target: "_blank", primary: false },
+        { label: "View Project", href: LINKS.prioritize, target: "_blank", primary: true },
       ],
       hint: "Keep scrolling — something different ahead",
     },
@@ -205,7 +210,7 @@ function Hero() {
       tags: ["Unity", "C#", "Game Design", "2D", "Gameplay Programming"],
       highlight:
         "Currently building the split-and-reunite control system and puzzle mechanics that let each character solve different parts of the same level.",
-      actions: [{ label: "View Progress", href: "#", primary: true }],
+      actions: [{ label: "View Progress", href: LINKS.github, target: "_blank", primary: true }],
       hint: "Keep scrolling — what's next?",
     },
     {
@@ -218,12 +223,17 @@ function Hero() {
         "I'm looking for software development opportunities where I can keep learning, contribute to real products, and grow as an engineer.",
       role: "Backend · Full Stack · Game Development",
       actions: [
-        { label: "View Resume", href: "#", primary: true },
-        { label: "Contact Me", href: "#contact", primary: false },
+        { label: "View Resume", href: LINKS.resume, target: "_blank", primary: true },
+        {
+          label: "Contact Me",
+          href: LINKS.contact,
+          primary: false,
+          onClick: (event: MouseEvent<HTMLAnchorElement>) => handleStoryNavigation(event, "contact"),
+        },
       ],
       links: [
-        { label: "LinkedIn", href: "https://www.linkedin.com/in/rachel-youm/", target: "_blank" },
-        { label: "GitHub", href: "https://github.com/rachellyoum", target: "_blank" },
+        { label: "LinkedIn", href: LINKS.linkedin, target: "_blank" },
+        { label: "GitHub", href: LINKS.github, target: "_blank" },
       ],
     },
   ] as const;
@@ -304,6 +314,11 @@ function Hero() {
                             ? "noreferrer"
                             : undefined
                         }
+                        onClick={
+                          "onClick" in action && action.onClick
+                            ? action.onClick
+                            : undefined
+                        }
                       >
                         {action.label}
                       </a>
@@ -343,10 +358,10 @@ function Hero() {
             <p>Software Developer</p>
             <p>Computing Science</p>
             <div className="story-footer-nav mobile-footer-nav">
-              <a href="https://github.com/rachellyoum" target="_blank" rel="noreferrer">
+              <a href={LINKS.github} target="_blank" rel="noreferrer">
                 GitHub
               </a>
-              <a href="https://www.linkedin.com/in/rachel-youm/" target="_blank" rel="noreferrer">
+              <a href={LINKS.linkedin} target="_blank" rel="noreferrer">
                 LinkedIn
               </a>
               <a href="#home">Back to top</a>
@@ -387,13 +402,17 @@ function Hero() {
                 </p>
 
                 <div className="hero-actions">
-                  <a className="button button-primary" href="#projects">
+                  <a
+                    className="button button-primary"
+                    href={LINKS.projects}
+                    onClick={(event) => handleStoryNavigation(event, "projects")}
+                  >
                     View my work
                   </a>
 
                   <a
                     className="button button-secondary"
-                    href="https://github.com/rachellyoum"
+                    href={LINKS.github}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -481,18 +500,14 @@ function Hero() {
                 </p>
 
                 <div className="hero-actions project-actions">
-                  <a className="button button-primary" href="#" aria-label="View MapSi project">
-                    View Project
-                  </a>
-
                   <a
-                    className="button button-secondary"
-                    href="https://github.com/rachellyoum/mapsi-public"
+                    className="button button-primary"
+                    href={LINKS.mapsi}
                     target="_blank"
                     rel="noreferrer"
-                    aria-label="View MapSi GitHub"
+                    aria-label="View MapSi project"
                   >
-                    GitHub
+                    View Project
                   </a>
                 </div>
 
@@ -540,18 +555,14 @@ function Hero() {
                 </p>
 
                 <div className="hero-actions project-actions">
-                  <a className="button button-primary" href="#" aria-label="View Prioritize project">
-                    View Project
-                  </a>
-
                   <a
-                    className="button button-secondary"
-                    href="https://github.com/rachellyoum/prioritize-public"
+                    className="button button-primary"
+                    href={LINKS.prioritize}
                     target="_blank"
                     rel="noreferrer"
-                    aria-label="View Prioritize GitHub"
+                    aria-label="View Prioritize project"
                   >
-                    GitHub
+                    View Project
                   </a>
                 </div>
 
@@ -605,7 +616,13 @@ function Hero() {
                 </p>
 
                 <div className="hero-actions project-actions">
-                  <a className="button button-primary" href="#" aria-label="View Dog + Human progress">
+                  <a
+                    className="button button-primary"
+                    href={LINKS.github}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="View Dog + Human progress"
+                  >
                     View Progress
                   </a>
                 </div>
@@ -642,11 +659,22 @@ function Hero() {
                 <p className="project-role final-role">Backend · Full Stack · Game Development</p>
 
                 <div className="hero-actions project-actions final-actions">
-                  <a className="button button-primary" href="#" aria-label="View resume">
+                  <a
+                    className="button button-primary"
+                    href={LINKS.resume}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="View resume"
+                  >
                     View Resume
                   </a>
 
-                  <a className="button button-secondary" href="#contact" aria-label="Contact Rachel">
+                  <a
+                    className="button button-secondary"
+                    href={LINKS.contact}
+                    aria-label="Contact Rachel"
+                    onClick={(event) => handleStoryNavigation(event, "contact")}
+                  >
                     Contact Me
                   </a>
                 </div>
@@ -674,10 +702,10 @@ function Hero() {
           <p>Rachel Youm</p>
           <p>Software Developer / Computing Science</p>
           <div className="story-footer-nav">
-            <a href="https://github.com/rachellyoum" target="_blank" rel="noreferrer">
+            <a href={LINKS.github} target="_blank" rel="noreferrer">
               GitHub
             </a>
-            <a href="https://www.linkedin.com/in/rachel-youm/" target="_blank" rel="noreferrer">
+            <a href={LINKS.linkedin} target="_blank" rel="noreferrer">
               LinkedIn
             </a>
             <a href="#home">Back to top</a>
