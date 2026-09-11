@@ -10,6 +10,30 @@ type SceneProps = {
   reducedMotion?: boolean;
 };
 
+const SCENE_COLORS = {
+  cream: "#f7f3ea",
+  creamDark: "#e7e0d2",
+  creamDarker: "#dfe5d8",
+  sageLight: "#dfe8d7",
+  sage: "#a7bca1",
+  sageDark: "#6f8e69",
+  sageDeep: "#4f6853",
+  forest: "#31483a",
+  wood: "#d2b18f",
+  woodDark: "#9a7154",
+  concrete: "#e9e3d7",
+  concreteDark: "#d0cbc0",
+  mapsiBlue: "#7aa7c7",
+  mapsiBlueDeep: "#5683ab",
+  prioritizeAmber: "#d7a66d",
+  prioritizeAmberDark: "#b98148",
+  gameCoral: "#d67f66",
+  gameCoralDark: "#b7664f",
+  futureGold: "#d4b27c",
+  finalPath: "#dfe7d7",
+  finalAccent: "#d4b27c",
+} as const;
+
 const CAMERA_STOPS = {
   workspace: {
     position: new Vector3(6.2, 4.5, 6),
@@ -146,17 +170,17 @@ function Workspace({ progress, reducedMotion = false }: SceneProps) {
       <group ref={groupRef}>
         <mesh position={[0, -1.45, 0]}>
           <boxGeometry args={[6, 0.35, 5]} />
-          <meshStandardMaterial color="#cbd9c3" />
+          <meshStandardMaterial color={SCENE_COLORS.sageLight} roughness={0.88} metalness={0.02} />
         </mesh>
 
         <mesh position={[-0.5, -1.25, 0.4]}>
           <boxGeometry args={[3.4, 0.04, 2.5]} />
-          <meshStandardMaterial color="#e9e5d8" />
+          <meshStandardMaterial color={SCENE_COLORS.creamDark} roughness={0.9} metalness={0.02} />
         </mesh>
 
         <mesh position={[0, -0.25, 0]}>
           <boxGeometry args={[3.1, 0.18, 1.35]} />
-          <meshStandardMaterial color="#c9aa82" />
+          <meshStandardMaterial color={SCENE_COLORS.wood} roughness={0.82} metalness={0.02} />
         </mesh>
 
         {[
@@ -167,78 +191,80 @@ function Workspace({ progress, reducedMotion = false }: SceneProps) {
         ].map((position, index) => (
           <mesh key={index} position={position as [number, number, number]}>
             <boxGeometry args={[0.16, 1, 0.16]} />
-            <meshStandardMaterial color="#98785b" />
+            <meshStandardMaterial color={SCENE_COLORS.woodDark} roughness={0.8} metalness={0.02} />
           </mesh>
         ))}
 
         <mesh position={[-0.3, -0.08, 0]}>
           <boxGeometry args={[1.25, 0.07, 0.78]} />
-          <meshStandardMaterial color="#435747" />
+          <meshStandardMaterial color={SCENE_COLORS.sageDeep} roughness={0.85} metalness={0.02} />
         </mesh>
 
         <mesh position={[-0.3, 0.43, -0.34]} rotation={[-0.18, 0, 0]}>
           <boxGeometry args={[1.25, 0.85, 0.06]} />
-          <meshStandardMaterial color="#314135" />
+          <meshStandardMaterial color={SCENE_COLORS.forest} roughness={0.9} metalness={0.02} />
         </mesh>
 
         <mesh position={[-0.3, 0.43, -0.302]} rotation={[-0.18, 0, 0]}>
           <planeGeometry args={[1.03, 0.66]} />
           <meshStandardMaterial
-            color="#e4ecdf"
-            emissive="#b9cdb0"
-            emissiveIntensity={0.25}
+            color={SCENE_COLORS.cream}
+            emissive={SCENE_COLORS.sage}
+            emissiveIntensity={0.16}
+            roughness={0.82}
+            metalness={0.02}
           />
         </mesh>
 
         <mesh position={[-1.05, -0.05, 0]}>
           <boxGeometry args={[0.55, 0.12, 0.7]} />
-          <meshStandardMaterial color="#859d7c" />
+          <meshStandardMaterial color={SCENE_COLORS.sage} roughness={0.8} metalness={0.02} />
         </mesh>
 
         <mesh position={[-1.05, 0.08, 0]}>
           <boxGeometry args={[0.5, 0.12, 0.67]} />
-          <meshStandardMaterial color="#e2c7a0" />
+          <meshStandardMaterial color={SCENE_COLORS.wood} roughness={0.82} metalness={0.02} />
         </mesh>
 
         <mesh position={[1.15, 0.02, 0]}>
           <cylinderGeometry args={[0.3, 0.24, 0.5, 16]} />
-          <meshStandardMaterial color="#d2b49c" />
+          <meshStandardMaterial color={SCENE_COLORS.wood} roughness={0.8} metalness={0.02} />
         </mesh>
 
         <mesh position={[1.15, 0.45, 0]}>
           <sphereGeometry args={[0.4, 16, 16]} />
-          <meshStandardMaterial color="#718d68" />
+          <meshStandardMaterial color={SCENE_COLORS.sageDark} roughness={0.8} metalness={0.02} />
         </mesh>
 
         <mesh position={[0.9, 0.52, 0.05]}>
           <sphereGeometry args={[0.25, 16, 16]} />
-          <meshStandardMaterial color="#91aa87" />
+          <meshStandardMaterial color={SCENE_COLORS.sage} roughness={0.82} metalness={0.02} />
         </mesh>
 
         <mesh position={[1.4, 0.58, -0.05]}>
           <sphereGeometry args={[0.28, 16, 16]} />
-          <meshStandardMaterial color="#587252" />
+          <meshStandardMaterial color={SCENE_COLORS.sageDeep} roughness={0.85} metalness={0.02} />
         </mesh>
 
         <mesh position={[0, -0.75, 1.3]}>
           <boxGeometry args={[1, 0.16, 0.9]} />
-          <meshStandardMaterial color="#738f6b" />
+          <meshStandardMaterial color={SCENE_COLORS.sageDark} roughness={0.82} metalness={0.02} />
         </mesh>
 
         <mesh position={[0, -0.15, 1.68]}>
           <boxGeometry args={[1, 1.1, 0.16]} />
-          <meshStandardMaterial color="#738f6b" />
+          <meshStandardMaterial color={SCENE_COLORS.sageDeep} roughness={0.82} metalness={0.02} />
         </mesh>
 
         <group position={[2, -0.85, 1]}>
           <mesh>
             <boxGeometry args={[0.75, 0.55, 1]} />
-            <meshStandardMaterial color="#c49b6c" />
+            <meshStandardMaterial color={SCENE_COLORS.wood} roughness={0.82} metalness={0.02} />
           </mesh>
 
           <mesh position={[0, 0.28, -0.55]}>
             <boxGeometry args={[0.55, 0.5, 0.5]} />
-            <meshStandardMaterial color="#c49b6c" />
+            <meshStandardMaterial color={SCENE_COLORS.woodDark} roughness={0.82} metalness={0.02} />
           </mesh>
         </group>
       </group>
@@ -332,32 +358,32 @@ function SFUCampus({ progress, reducedMotion = false }: SceneProps) {
     <group ref={ref}>
       <mesh position={[0, -1.3, 0]}>
         <cylinderGeometry args={[3.5, 4.2, 0.9, 24]} />
-        <meshStandardMaterial color="#cbd9c3" />
+        <meshStandardMaterial color={SCENE_COLORS.sageLight} roughness={0.88} metalness={0.02} />
       </mesh>
 
       <mesh position={[0, -0.8, 0]} rotation={[-0.15, 0, 0]}>
         <boxGeometry args={[1.8, 0.06, 4]} />
-        <meshStandardMaterial color="#e9e5d8" />
+        <meshStandardMaterial color={SCENE_COLORS.creamDark} roughness={0.88} metalness={0.02} />
       </mesh>
 
       <mesh position={[-1.1, -0.38, -0.6]}>
         <boxGeometry args={[0.9, 0.9, 0.9]} />
-        <meshStandardMaterial color="#dfd9d1" />
+        <meshStandardMaterial color={SCENE_COLORS.concrete} roughness={0.9} metalness={0.02} />
       </mesh>
 
       <mesh position={[1.15, -0.36, -0.2]}>
         <boxGeometry args={[0.7, 0.7, 0.9]} />
-        <meshStandardMaterial color="#cfc6bf" />
+        <meshStandardMaterial color={SCENE_COLORS.concreteDark} roughness={0.9} metalness={0.02} />
       </mesh>
 
       <mesh position={[0, -0.36, 1.05]}>
         <boxGeometry args={[1.4, 0.7, 0.5]} />
-        <meshStandardMaterial color="#e6dfd9" />
+        <meshStandardMaterial color={SCENE_COLORS.creamDarker} roughness={0.9} metalness={0.02} />
       </mesh>
 
       <mesh position={[0.6, -0.6, -0.9]}>
         <boxGeometry args={[0.9, 0.08, 0.28]} />
-        <meshStandardMaterial color="#b88c66" />
+        <meshStandardMaterial color={SCENE_COLORS.woodDark} roughness={0.85} metalness={0.02} />
       </mesh>
 
       {[
@@ -387,7 +413,7 @@ function SFUCampus({ progress, reducedMotion = false }: SceneProps) {
         <Text
           position={[0, 0.02, 0.04]}
           fontSize={0.12}
-          color="#465a43"
+          color={SCENE_COLORS.forest}
           anchorX="center"
           anchorY="middle"
         >
@@ -411,12 +437,12 @@ function MapPin({
     <group position={position} scale={scale}>
       <mesh position={[0, 0.22, 0]}>
         <sphereGeometry args={[0.18, 18, 18]} />
-        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.14} />
+        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.14} roughness={0.76} metalness={0.02} />
       </mesh>
 
       <mesh position={[0, -0.12, 0]}>
         <coneGeometry args={[0.14, 0.58, 18]} />
-        <meshStandardMaterial color={color} />
+        <meshStandardMaterial color={color} roughness={0.78} metalness={0.02} />
       </mesh>
 
       <mesh position={[0, -0.38, 0]}>
@@ -462,27 +488,27 @@ function Airplane({ reducedMotion = false, path }: { reducedMotion?: boolean; pa
     <group ref={ref}>
       <mesh position={[0, 0, 0]} rotation={[0, 0, 0.1]}>
         <boxGeometry args={[0.9, 0.12, 0.18]} />
-        <meshStandardMaterial color="#f0f0eb" />
+        <meshStandardMaterial color={SCENE_COLORS.cream} roughness={0.8} metalness={0.02} />
       </mesh>
       <mesh position={[-0.25, 0.04, 0]} rotation={[0.15, 0, 0]}>
         <boxGeometry args={[0.38, 0.08, 0.18]} />
-        <meshStandardMaterial color="#dfeaf7" />
+        <meshStandardMaterial color={SCENE_COLORS.creamDark} roughness={0.82} metalness={0.02} />
       </mesh>
       <mesh position={[0.3, 0.02, 0]} rotation={[0, 0, 0.08]}>
         <boxGeometry args={[0.5, 0.08, 0.16]} />
-        <meshStandardMaterial color="#dfeaf7" />
+        <meshStandardMaterial color={SCENE_COLORS.creamDark} roughness={0.82} metalness={0.02} />
       </mesh>
       <mesh position={[0.1, 0.15, 0]}>
         <boxGeometry args={[0.14, 0.12, 0.08]} />
-        <meshStandardMaterial color="#dfeaf7" />
+        <meshStandardMaterial color={SCENE_COLORS.creamDark} roughness={0.82} metalness={0.02} />
       </mesh>
       <mesh position={[-0.2, -0.12, 0]}>
         <boxGeometry args={[0.2, 0.08, 0.08]} />
-        <meshStandardMaterial color="#dfeaf7" />
+        <meshStandardMaterial color={SCENE_COLORS.creamDark} roughness={0.82} metalness={0.02} />
       </mesh>
       <mesh position={[-0.05, 0, 0.12]}>
         <boxGeometry args={[0.16, 0.04, 0.1]} />
-        <meshStandardMaterial color="#8fb7d6" emissive="#8fb7d6" emissiveIntensity={0.25} />
+        <meshStandardMaterial color={SCENE_COLORS.mapsiBlue} emissive={SCENE_COLORS.mapsiBlue} emissiveIntensity={0.18} roughness={0.8} metalness={0.02} />
       </mesh>
     </group>
   );
@@ -588,16 +614,16 @@ function MapSiWorld({ progress, reducedMotion = false }: SceneProps) {
     <group ref={ref}>
       <mesh position={[0, -1.18, 0]} rotation={[0.08, 0.2, 0]}>
         <boxGeometry args={[5.8, 0.38, 4.4]} />
-        <meshStandardMaterial color="#f2f0e7" />
+        <meshStandardMaterial color={SCENE_COLORS.cream} roughness={0.9} metalness={0.02} />
       </mesh>
 
       <mesh position={[0, -0.92, 0]} rotation={[-0.08, 0, 0]}>
         <boxGeometry args={[5.1, 0.14, 3.5]} />
-        <meshStandardMaterial color="#dde7d8" />
+        <meshStandardMaterial color={SCENE_COLORS.sageLight} roughness={0.88} metalness={0.02} />
       </mesh>
 
       <mesh geometry={routeGeometry} position={[0, 0.04, 0]}>
-        <meshStandardMaterial color="#6d9ec4" emissive="#6d9ec4" emissiveIntensity={0.22} />
+        <meshStandardMaterial color={SCENE_COLORS.mapsiBlue} emissive={SCENE_COLORS.mapsiBlue} emissiveIntensity={0.18} roughness={0.7} metalness={0.02} />
       </mesh>
 
       {routeNodes.map((point, index) => (
@@ -611,11 +637,11 @@ function MapSiWorld({ progress, reducedMotion = false }: SceneProps) {
       <group position={[-2.25, 0.02, -0.95]}>
         <mesh position={[0, 0.22, 0]}>
           <boxGeometry args={[1.2, 0.8, 0.9]} />
-          <meshStandardMaterial color="#e4e6dc" />
+          <meshStandardMaterial color={SCENE_COLORS.creamDark} roughness={0.88} metalness={0.02} />
         </mesh>
         <mesh position={[0, 0.64, 0.22]}>
           <boxGeometry args={[0.8, 0.14, 0.28]} />
-          <meshStandardMaterial color="#d0d8ca" />
+          <meshStandardMaterial color={SCENE_COLORS.sageLight} roughness={0.82} metalness={0.02} />
         </mesh>
         <mesh position={[-0.34, 0.42, 0.24]}>
           <boxGeometry args={[0.12, 0.18, 0.06]} />
@@ -634,11 +660,11 @@ function MapSiWorld({ progress, reducedMotion = false }: SceneProps) {
       <group position={[0.2, 0.02, 1.25]}>
         <mesh position={[0, 0.18, 0]}>
           <boxGeometry args={[0.85, 0.52, 0.75]} />
-          <meshStandardMaterial color="#d8d5c9" />
+          <meshStandardMaterial color={SCENE_COLORS.concrete} roughness={0.9} metalness={0.02} />
         </mesh>
         <mesh position={[0, 0.53, 0.1]}>
           <boxGeometry args={[0.9, 0.12, 0.24]} />
-          <meshStandardMaterial color="#c4b39a" />
+          <meshStandardMaterial color={SCENE_COLORS.wood} roughness={0.8} metalness={0.02} />
         </mesh>
         <mesh position={[-0.18, 0.32, 0.2]}>
           <boxGeometry args={[0.16, 0.16, 0.1]} />
@@ -653,11 +679,11 @@ function MapSiWorld({ progress, reducedMotion = false }: SceneProps) {
       <group position={[2.1, 0.02, -0.82]}>
         <mesh position={[0, 0.52, 0]}>
           <cylinderGeometry args={[0.32, 0.46, 1.0, 8]} />
-          <meshStandardMaterial color="#dfe7d9" />
+          <meshStandardMaterial color={SCENE_COLORS.creamDark} roughness={0.88} metalness={0.02} />
         </mesh>
         <mesh position={[0, 1.15, 0]}>
           <coneGeometry args={[0.24, 0.52, 8]} />
-          <meshStandardMaterial color="#ccd9ca" />
+          <meshStandardMaterial color={SCENE_COLORS.sageLight} roughness={0.8} metalness={0.02} />
         </mesh>
       </group>
 
@@ -703,12 +729,12 @@ function TaskCard({
     <group ref={ref}>
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[1.45, 0.72, 0.12]} />
-        <meshStandardMaterial color={color} />
+        <meshStandardMaterial color={color} roughness={0.84} metalness={0.02} />
       </mesh>
 
       <mesh position={[-0.52, 0, 0.08]}>
         <boxGeometry args={[0.22, 0.22, 0.04]} />
-        <meshStandardMaterial color="#f5f1ea" />
+        <meshStandardMaterial color={SCENE_COLORS.cream} roughness={0.86} metalness={0.02} />
       </mesh>
 
       <mesh position={[-0.2, 0.12, 0.1]}>
@@ -725,11 +751,11 @@ function TaskCard({
         <group position={[-0.52, 0, 0.14]}>
           <mesh rotation={[0, 0, -0.6]}>
             <boxGeometry args={[0.18, 0.06, 0.04]} />
-            <meshStandardMaterial color="#d6a262" />
+            <meshStandardMaterial color={SCENE_COLORS.prioritizeAmber} roughness={0.76} metalness={0.02} />
           </mesh>
           <mesh rotation={[0, 0, 0.75]} position={[0.09, -0.02, 0]}>
             <boxGeometry args={[0.26, 0.06, 0.04]} />
-            <meshStandardMaterial color="#d6a262" />
+            <meshStandardMaterial color={SCENE_COLORS.prioritizeAmber} roughness={0.76} metalness={0.02} />
           </mesh>
         </group>
       )}
@@ -742,11 +768,11 @@ function PrioritizeClock() {
     <group position={[1.95, 0.55, 0.2]} rotation={[0.1, 0.15, 0]}>
       <mesh>
         <cylinderGeometry args={[0.38, 0.38, 0.12, 28]} />
-        <meshStandardMaterial color="#f4efe7" />
+        <meshStandardMaterial color={SCENE_COLORS.cream} roughness={0.85} metalness={0.02} />
       </mesh>
       <mesh position={[0, 0, 0.06]}>
         <cylinderGeometry args={[0.31, 0.31, 0.02, 28]} />
-        <meshStandardMaterial color="#e7d3b5" emissive="#d6a262" emissiveIntensity={0.12} />
+        <meshStandardMaterial color={SCENE_COLORS.creamDark} emissive={SCENE_COLORS.prioritizeAmber} emissiveIntensity={0.1} roughness={0.8} metalness={0.02} />
       </mesh>
       <mesh position={[0, 0, 0.08]} rotation={[0, 0, 0.7]}>
         <boxGeometry args={[0.28, 0.05, 0.04]} />
@@ -1287,39 +1313,39 @@ function FinalWorld({ progress, reducedMotion = false }: SceneProps) {
     <group ref={ref}>
       <mesh position={[0, -1.05, 0]} rotation={[0.08, 0.12, 0]}>
         <boxGeometry args={[10.5, 0.28, 2.4]} />
-        <meshStandardMaterial color="#edf0e8" />
+        <meshStandardMaterial color={SCENE_COLORS.cream} roughness={0.9} metalness={0.02} />
       </mesh>
 
       <mesh position={[0.1, -0.8, 0.35]} rotation={[0.02, 0.1, 0]}>
         <boxGeometry args={[5.8, 0.12, 1.2]} />
-        <meshStandardMaterial color="#dfe8d4" />
+        <meshStandardMaterial color={SCENE_COLORS.sageLight} roughness={0.9} metalness={0.02} />
       </mesh>
 
       {[-2.2, -0.8, 0.6, 2.0, 3.6, 5.2].map((x, index) => (
         <mesh key={index} position={[x, -0.48, 0.4 + (index % 2 === 0 ? 0.12 : -0.18)]} rotation={[0, 0.04, 0]}>
           <boxGeometry args={[1.1, 0.1, 0.28]} />
-          <meshStandardMaterial color="#d6e0c7" />
+          <meshStandardMaterial color={SCENE_COLORS.sageLight} roughness={0.9} metalness={0.02} />
         </mesh>
       ))}
 
       <mesh position={[5.8, 0.18, 0.7]}>
         <boxGeometry args={[1.2, 0.18, 0.9]} />
-        <meshStandardMaterial color="#e8e2d0" />
+        <meshStandardMaterial color={SCENE_COLORS.creamDark} roughness={0.88} metalness={0.02} />
       </mesh>
 
       <mesh position={[6.0, 0.72, 0.7]}>
         <boxGeometry args={[0.12, 0.74, 0.12]} />
-        <meshStandardMaterial color="#b86b52" />
+        <meshStandardMaterial color={SCENE_COLORS.woodDark} roughness={0.82} metalness={0.02} />
       </mesh>
 
       <mesh position={[6.0, 1.04, 0.7]}>
         <boxGeometry args={[0.38, 0.14, 0.08]} />
-        <meshStandardMaterial color="#d49971" />
+        <meshStandardMaterial color={SCENE_COLORS.futureGold} roughness={0.78} metalness={0.02} />
       </mesh>
 
       <mesh position={[4.9, 0.7, 0.2]}>
         <boxGeometry args={[0.6, 0.12, 0.6]} />
-        <meshStandardMaterial color="#c7d5b3" />
+        <meshStandardMaterial color={SCENE_COLORS.sageLight} roughness={0.88} metalness={0.02} />
       </mesh>
 
       {[[-3.4, -0.3, -0.5], [-1.8, -0.18, 0.9], [2.2, -0.22, -0.8], [4.2, -0.18, 0.85]].map((pos, index) => (
@@ -1355,10 +1381,11 @@ function PortfolioScene({ progress, reducedMotion = false }: SceneProps) {
         }}
         dpr={[1, 1.5]}
       >
-        <ambientLight intensity={1.5} />
+        <ambientLight intensity={1.1} color="#f7f0e0" />
+        <hemisphereLight args={["#f7ede0", SCENE_COLORS.forest, 1.2]} />
 
-        <directionalLight position={[4, 7, 5]} intensity={2.5} />
-        <directionalLight position={[-4, 2, -3]} intensity={0.8} />
+        <directionalLight position={[5, 8, 5]} intensity={1.8} color="#f4ead6" />
+        <directionalLight position={[-4, 4, -3]} intensity={0.9} color="#dfead8" />
 
         {sfuVisible && <SFUCampus progress={progress} reducedMotion={reducedMotion} />}
         {workspaceVisible && <Workspace progress={progress} reducedMotion={reducedMotion} />}
