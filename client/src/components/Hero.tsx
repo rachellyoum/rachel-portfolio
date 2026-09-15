@@ -425,6 +425,11 @@ function Hero() {
                   <span>Full Stack</span>
                   <span>Game Dev</span>
                 </div>
+
+                <div className="scroll-hint">
+                    <span className="scroll-line"></span>
+                    <span>Scroll to explore my story in 3D</span>
+                </div>
               </div>
 
               <div

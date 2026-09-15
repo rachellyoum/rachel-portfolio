@@ -37,24 +37,29 @@ const SCENE_COLORS = {
 const CAMERA_STOPS = {
   workspace: {
     position: new Vector3(6.2, 4.5, 6),
-    target: new Vector3(0, 0.2, 0),
+    target: new Vector3(0, -0.35, 0),
   },
+
   sfu: {
     position: new Vector3(3.8, 3.1, 5.2),
-    target: new Vector3(0.8, -0.1, 0.8),
+    target: new Vector3(0.8, -0.55, 0.8),
   },
+
   mapsi: {
     position: new Vector3(5.8, 4.0, 7.3),
     target: new Vector3(0.2, 0.08, 0.35),
   },
+
   prioritize: {
     position: new Vector3(6.2, 4.2, 7.4),
     target: new Vector3(0.6, 0.15, 0.6),
   },
+
   dogHuman: {
     position: new Vector3(9.1, 4.2, 7.4),
     target: new Vector3(0.55, 0.52, 0.2),
   },
+
   final: {
     position: new Vector3(10.4, 4.6, 9.2),
     target: new Vector3(0.8, 0.42, 0.5),

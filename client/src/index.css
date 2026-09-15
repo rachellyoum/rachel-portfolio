@@ -1096,3 +1096,17 @@ a {
     transform: translateX(100%);
   }
 }
+
+/* --------------------
+   DESKTOP STORY POSITION POLISH
+-------------------- */
+
+@media (min-width: 901px) {
+  .hero-grid {
+    transform: translateY(-24px);
+  }
+
+  .hero-visual {
+    transform: translateY(-18px);
+  }
+}
