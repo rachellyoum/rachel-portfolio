@@ -176,7 +176,7 @@ function Hero() {
       highlight:
         "Built backend services for AI itinerary generation, POI discovery, routing, transportation decisions, and trip sharing.",
       actions: [
-        { label: "View Project", href: LINKS.mapsi, target: "_blank", primary: true },
+        { label: "GitHub", href: LINKS.mapsiGithub, target: "_blank", primary: true },
       ],
       hint: "Keep scrolling — more projects ahead",
     },
@@ -193,7 +193,8 @@ function Hero() {
       highlight:
         "Built user authentication and backend services for calendar output, event logging, and scheduling workflows.",
       actions: [
-        { label: "View Project", href: LINKS.prioritize, target: "_blank", primary: true },
+        { label: "View Project", href: LINKS.prioritizeLive, target: "_blank", primary: true },
+        { label: "GitHub", href: LINKS.prioritizeGithub, target: "_blank", primary: false },
       ],
       hint: "Keep scrolling — something different ahead",
     },
@@ -507,12 +508,12 @@ function Hero() {
                 <div className="hero-actions project-actions">
                   <a
                     className="button button-primary"
-                    href={LINKS.mapsi}
+                    href={LINKS.mapsiGithub}
                     target="_blank"
                     rel="noreferrer"
-                    aria-label="View MapSi project"
+                    aria-label="View MapSi GitHub repository"
                   >
-                    View Project
+                    GitHub
                   </a>
                 </div>
 
@@ -562,12 +563,22 @@ function Hero() {
                 <div className="hero-actions project-actions">
                   <a
                     className="button button-primary"
-                    href={LINKS.prioritize}
+                    href={LINKS.prioritizeLive}
                     target="_blank"
                     rel="noreferrer"
                     aria-label="View Prioritize project"
                   >
                     View Project
+                  </a>
+
+                  <a
+                    className="button button-secondary"
+                    href={LINKS.prioritizeGithub}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="View Prioritize GitHub repository"
+                  >
+                    GitHub
                   </a>
                 </div>
 
