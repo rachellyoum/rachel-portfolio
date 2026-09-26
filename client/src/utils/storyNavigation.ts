@@ -8,12 +8,13 @@ export type StoryChapter =
   | "chapter3"
   | "chapter4"
   | "chapter5"
-  | "chapter6";
+  | "chapter6"
+  | "chapter7";
 
 const STORY_SECTION_MAP: Record<StorySection, { chapter: StoryChapter; hash: string }> = {
   about: { chapter: "chapter1", hash: "#about" },
   projects: { chapter: "chapter3", hash: "#projects" },
-  contact: { chapter: "chapter6", hash: "#contact" },
+  contact: { chapter: "chapter7", hash: "#contact" },
 };
 
 export const MOBILE_BREAKPOINT = 650;

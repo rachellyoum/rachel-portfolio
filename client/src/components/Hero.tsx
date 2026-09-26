@@ -28,7 +28,7 @@ function Hero() {
     typeof window !== "undefined" ? window.innerWidth <= 650 : false
   );
   const [activeChapter, setActiveChapter] = useState<
-    "chapter1" | "chapter2" | "chapter3" | "chapter4" | "chapter5" | "chapter6"
+    "chapter1" | "chapter2" | "chapter3" | "chapter4" | "chapter5" | "chapter6" | "chapter7"
   >("chapter1");
   const reducedMotion = usePrefersReducedMotion();
 
@@ -104,12 +104,13 @@ function Hero() {
   }, [isMobile]);
 
   const chapterMap = {
-    chapter1: 0.05,
-    chapter2: 0.22,
-    chapter3: 0.39,
-    chapter4: 0.57,
-    chapter5: 0.77,
-    chapter6: 0.94,
+    chapter1: 0.04,
+    chapter2: 0.18,
+    chapter3: 0.33,
+    chapter4: 0.48,
+    chapter5: 0.63,
+    chapter6: 0.79,
+    chapter7: 0.94,
   } as const;
 
   const progress = reducedMotion ? clamp01(scrollProgress * 0.8) : scrollProgress;
@@ -119,6 +120,7 @@ function Hero() {
   const chapter4Opacity = chapterVisibility(progress, "chapter4");
   const chapter5Opacity = chapterVisibility(progress, "chapter5");
   const chapter6Opacity = chapterVisibility(progress, "chapter6");
+  const chapter7Opacity = chapterVisibility(progress, "chapter7");
 
   const chapter1Shift = (1 - chapter1Opacity) * -18;
   const chapter2Shift = (1 - chapter2Opacity) * 20;
@@ -126,6 +128,7 @@ function Hero() {
   const chapter4Shift = (1 - chapter4Opacity) * 20;
   const chapter5Shift = (1 - chapter5Opacity) * 20;
   const chapter6Shift = (1 - chapter6Opacity) * 20;
+  const chapter7Shift = (1 - chapter7Opacity) * 20;
 
   const mobileSceneProgress = chapterMap[activeChapter];
 
@@ -193,15 +196,33 @@ function Hero() {
       highlight:
         "Built user authentication and backend services for calendar output, event logging, and scheduling workflows.",
       actions: [
-        { label: "View Project", href: LINKS.prioritizeLive, target: "_blank", primary: true },
+        { label: "Try It Live", href: LINKS.prioritizeLive, target: "_blank", primary: true },
         { label: "GitHub", href: LINKS.prioritizeGithub, target: "_blank", primary: false },
       ],
       hint: "Keep scrolling — something different ahead",
     },
     {
       id: "chapter5",
-      slug: "skills",
+      slug: "chapter-5",
       eyebrow: "CHAPTER 05",
+      heading: "SweatMarket",
+      tagline: "Making workout accountability social.",
+      description:
+        "A full-stack fitness platform where users create workouts, coordinate in real time, verify attendance with geolocation and signed QR check-ins, and earn rewards.",
+      role: "Role: Full-Stack Developer",
+      tags: ["FastAPI", "PostgreSQL", "WebSockets", "Pytest", "Google Places"],
+      highlight:
+        "Built real-time workout chat, QR + geolocation check-ins, automated rewards, and a 36-test backend suite.",
+      actions: [
+        { label: "Try It Live", href: LINKS.sweatMarketLive, target: "_blank", primary: true },
+        { label: "GitHub", href: LINKS.sweatMarketGithub, target: "_blank", primary: false },
+      ],
+      hint: "Keep scrolling — something different ahead",
+    },
+    {
+      id: "chapter6",
+      slug: "skills",
+      eyebrow: "CHAPTER 06",
       heading: "Dog + Human",
       badge: "IN DEVELOPMENT",
       tagline: "Currently building my first Unity game.",
@@ -211,13 +232,13 @@ function Hero() {
       tags: ["Unity", "C#", "Game Design", "2D", "Gameplay Programming"],
       highlight:
         "Currently building the split-and-reunite control system and puzzle mechanics that let each character solve different parts of the same level.",
-      actions: [{ label: "View Progress", href: LINKS.github, target: "_blank", primary: true }],
+      // actions: [{ label: "View Progress", href: LINKS.github, target: "_blank", primary: true }],
       hint: "Keep scrolling — what's next?",
     },
     {
-      id: "chapter6",
+      id: "chapter7",
       slug: "contact",
-      eyebrow: "CHAPTER 06",
+      eyebrow: "CHAPTER 07",
       heading: "What's next?",
       tagline: "The next chapter is still being written.",
       description:
@@ -227,9 +248,8 @@ function Hero() {
         { label: "View Resume", href: LINKS.resume, target: "_blank", primary: true },
         {
           label: "Contact Me",
-          href: LINKS.contact,
+          href: LINKS.email,
           primary: false,
-          onClick: (event: MouseEvent<HTMLAnchorElement>) => handleStoryNavigation(event, "contact"),
         },
       ],
       links: [
@@ -263,12 +283,12 @@ function Hero() {
                   <h1 className="mobile-heading">{chapter.heading}</h1>
                 ) : chapter.id === "chapter2" ? (
                   <h1 className="mobile-heading mobile-heading-tight">{chapter.heading}</h1>
-                ) : chapter.id === "chapter5" ? (
+                ) : chapter.id === "chapter6" ? (
                   <div className="project-header-row mobile-project-header">
                     <h1 className="project-name mobile-project-name">{chapter.heading}</h1>
                     <span className="project-status">{chapter.badge}</span>
                   </div>
-                ) : chapter.id === "chapter6" ? (
+                ) : chapter.id === "chapter7" ? (
                   <h1 className="project-name final-headline mobile-final-headline">{chapter.heading}</h1>
                 ) : (
                   <h1 className="project-name mobile-project-name">{chapter.heading}</h1>
@@ -568,7 +588,7 @@ function Hero() {
                     rel="noreferrer"
                     aria-label="View Prioritize project"
                   >
-                    View Project
+                    Try It Live
                   </a>
 
                   <a
@@ -589,7 +609,6 @@ function Hero() {
               </div>
 
               <div
-                id="skills"
                 className="chapter-copy chapter-five project-chapter"
                 style={{
                   opacity: chapter5Opacity,
@@ -599,6 +618,73 @@ function Hero() {
                 }}
               >
                 <p className="eyebrow">CHAPTER 05</p>
+
+                <h1 className="project-name">SweatMarket</h1>
+
+                <p className="project-chapter-tagline">
+                  Making workout accountability social.
+                </p>
+
+                <p className="hero-description project-description">
+                  A full-stack fitness platform where users create workouts,
+                  coordinate in real time, verify attendance with geolocation and
+                  signed QR check-ins, and earn rewards.
+                </p>
+
+                <p className="project-role">Role: Full-Stack Developer</p>
+
+                <div className="hero-tags project-tags">
+                  <span>FastAPI</span>
+                  <span>PostgreSQL</span>
+                  <span>WebSockets</span>
+                  <span>Pytest</span>
+                  <span>Google Places</span>
+                </div>
+
+                <p className="project-highlight">
+                  Built real-time workout chat, QR + geolocation check-ins,
+                  automated rewards, and a 36-test backend suite.
+                </p>
+
+                <div className="hero-actions project-actions">
+                  <a
+                    className="button button-primary"
+                    href={LINKS.sweatMarketLive}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="View SweatMarket project"
+                  >
+                    Try It Live
+                  </a>
+
+                  <a
+                    className="button button-secondary"
+                    href={LINKS.sweatMarketGithub}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="View SweatMarket GitHub repository"
+                  >
+                    GitHub
+                  </a>
+                </div>
+
+                <div className="scroll-hint">
+                  <span className="scroll-line"></span>
+                  <span>Keep scrolling — something different ahead</span>
+                </div>
+              </div>
+
+              <div
+                id="skills"
+                className="chapter-copy chapter-six project-chapter"
+                style={{
+                  opacity: chapter6Opacity,
+                  transform: `translate3d(0, ${chapter6Shift}px, 0)`,
+                  transition: "opacity 300ms ease, transform 300ms ease",
+                  pointerEvents: chapter6Opacity > 0.2 ? "auto" : "none",
+                }}
+              >
+                <p className="eyebrow">CHAPTER 06</p>
 
                 <div className="project-header-row">
                   <h1 className="project-name">Dog + Human</h1>
@@ -631,6 +717,7 @@ function Hero() {
                   level.
                 </p>
 
+                {/* 
                 <div className="hero-actions project-actions">
                   <a
                     className="button button-primary"
@@ -642,6 +729,7 @@ function Hero() {
                     View Progress
                   </a>
                 </div>
+                */}
 
                 <div className="scroll-hint">
                   <span className="scroll-line"></span>
@@ -651,15 +739,15 @@ function Hero() {
 
               <div
                 id="contact"
-                className="chapter-copy chapter-six project-chapter final-chapter"
+                className="chapter-copy chapter-seven project-chapter final-chapter"
                 style={{
-                  opacity: chapter6Opacity,
-                  transform: `translate3d(0, ${chapter6Shift}px, 0)`,
+                  opacity: chapter7Opacity,
+                  transform: `translate3d(0, ${chapter7Shift}px, 0)`,
                   transition: "opacity 300ms ease, transform 300ms ease",
-                  pointerEvents: chapter6Opacity > 0.2 ? "auto" : "none",
+                  pointerEvents: chapter7Opacity > 0.2 ? "auto" : "none",
                 }}
               >
-                <p className="eyebrow">CHAPTER 06</p>
+                <p className="eyebrow">CHAPTER 07</p>
 
                 <h1 className="project-name final-headline">What's next?</h1>
 
@@ -687,9 +775,8 @@ function Hero() {
 
                   <a
                     className="button button-secondary"
-                    href={LINKS.contact}
+                    href={LINKS.email}
                     aria-label="Contact Rachel"
-                    onClick={(event) => handleStoryNavigation(event, "contact")}
                   >
                     Contact Me
                   </a>
