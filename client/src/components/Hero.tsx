@@ -140,7 +140,8 @@ function Hero() {
       heading: (
         <>
           Hi, I'm Rachel.
-          <span> I build thoughtful software.</span>
+          <br />
+          <span>I build experiences with code.</span>
         </>
       ),
       description:
@@ -413,7 +414,8 @@ function Hero() {
 
                 <h1>
                   Hi, I'm Rachel.
-                  <span> I build thoughtful software.</span>
+                  <br />
+                  <span> I build experiences with code.</span>
                 </h1>
 
                 <p className="hero-description">

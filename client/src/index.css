@@ -426,6 +426,11 @@ a {
   color: var(--sage-500);
 }
 
+.chapter-one h1 > span {
+  font-size: 0.82em;
+  line-height: 0.95;
+}
+
 .hero-description {
   max-width: 590px;
   margin: 30px 0 0;
@@ -896,6 +901,11 @@ a {
   .mobile-heading-tight {
     max-width: 280px;
   }
+
+  .mobile-heading > span {
+  font-size: 0.82em;
+  line-height: 1;
+}
 
   .mobile-project-header {
     display: flex;
