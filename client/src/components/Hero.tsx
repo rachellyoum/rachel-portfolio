@@ -171,7 +171,7 @@ function Hero() {
       id: "chapter3",
       slug: "projects",
       eyebrow: "CHAPTER 03",
-      heading: "MapSi",
+      heading: "Mapsi",
       tagline: "Building software for the way people travel.",
       description:
         "An AI-powered travel planner that turns trip preferences into personalized itineraries, routes, points of interest, transportation recommendations, and collaborative travel plans.",
@@ -500,7 +500,7 @@ function Hero() {
               >
                 <p className="eyebrow">CHAPTER 03</p>
 
-                <h1 className="project-name">MapSi</h1>
+                <h1 className="project-name">Mapsi</h1>
 
                 <p className="project-chapter-tagline">
                   Building software for the way people travel.
@@ -533,7 +533,7 @@ function Hero() {
                     href={LINKS.mapsiGithub}
                     target="_blank"
                     rel="noreferrer"
-                    aria-label="View MapSi GitHub repository"
+                    aria-label="View Mapsi GitHub repository"
                   >
                     GitHub
                   </a>
